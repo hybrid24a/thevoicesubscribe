@@ -1,0 +1,67 @@
+<mjml>
+  <mj-body background-color="#F4F4F4">
+    <mj-include path="../../partials/brand-header.mjml"></mj-include>
+    <mj-include path="../../partials/greetings.mjml"></mj-include>
+    <mj-section
+      background-color="#ffffff"
+      text-align="left"
+      padding-top="0"
+      padding-bottom="10px">
+      <mj-column>
+        <mj-text color="#333333" line-height="130%">Nous avons bien enregistré votre commande, elle sera traitée dès la réception de votre paiement.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-wrapper
+      background-color="#fcfcfc"
+      border-top="1px solid #eeeeee"
+      padding="25px 25px">
+      <mj-section
+        text-align="left"
+        padding-top="0"
+        padding-bottom="10px">
+        <mj-column>
+          <mj-text
+            padding="0 0 10px 0"
+            font-size="14px"
+            font-weight="800"
+            color="#000000">Méthode de paiement:</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section
+        border="1px solid #aaaaaa"
+        background-color="#ffffff"
+        padding="15px 0">
+        <mj-column>
+          <mj-text font-weight="800" color="#333333">
+            {{ $tySettings['line1'] }}
+          </mj-text>
+          <mj-text color="#333333">
+            {{ $tySettings['line2'] }}
+          </mj-text>
+          <mj-text
+            color="#000000"
+            padding-top="0"
+            padding-bottom="5px"><span style="font-weight: bold">Montant</span> : {!! $order->getObjTotal()->getDisplayLocalPrice() !!}</mj-text>
+          <mj-text
+            color="#000000"
+            padding-top="0"
+            padding-bottom="5px"><span style="font-weight: bold">Titulaire du compte</span> : {{ $tySettings['account_name'] }}</mj-text>
+          <mj-text
+            color="#000000"
+            padding-top="0"
+            padding-bottom="5px"><span style="font-weight: bold">Détails du compte</span> : {{ $tySettings['account_number'] }}</mj-text>
+          <mj-text
+            color="#000000"
+            padding-top="0"
+            padding-bottom="0"><span style="font-weight: bold">Adresse de la banque</span> : {{ $tySettings['account_address'] }}</mj-text>
+          <mj-text line-height="130%" color="#000000">
+            <span style="font-weight: bold; color: red;">Note</span> : {{ str_replace('%ORDER_NUMBER%', $order->getNumber(), $tySettings['note']) }}
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-include path="../partials/order.mjml"></mj-include>
+    <mj-include path="../partials/status-link.mjml"></mj-include>
+    <mj-include path="../../partials/footer.mjml"></mj-include>
+  </mj-body>
+</mjml>

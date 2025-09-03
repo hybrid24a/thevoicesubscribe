@@ -1,0 +1,8 @@
+<mj-section
+  background-color="#ffffff"
+  text-align="left"
+  padding-bottom="0">
+  <mj-column>
+    <mj-text >Bonjour {{ $userName }},</mj-text>
+  </mj-column>
+</mj-section>

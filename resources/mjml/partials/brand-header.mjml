@@ -1,0 +1,15 @@
+<mj-section
+  background-color="#F4F4F4"
+  text-align="center">
+  <mj-column>
+    <mj-image
+      src="/build/images/the-voice-logo.png"
+      align="center"
+      width="200px"
+      padding="0"
+      padding-bottom="0"
+      padding-top="0"
+      padding-left="0"
+      padding-right="0"></mj-image>
+  </mj-column>
+</mj-section>

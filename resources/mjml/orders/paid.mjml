@@ -1,0 +1,16 @@
+<mjml>
+  <mj-body background-color="#F4F4F4">
+    <mj-include path="../partials/brand-header.mjml"></mj-include>
+    <mj-include path="../partials/greetings.mjml"></mj-include>
+    <mj-section
+      background-color="#ffffff"
+      text-align="left"
+      padding-top="0"
+      padding-bottom="0">
+      <mj-column>
+        <mj-text color="#333333" line-height="130%">Nous avons bien reçu votre paiement, votre commande sera traitée dès que possible.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-include path="../partials/footer.mjml"></mj-include>
+  </mj-body>
+</mjml>

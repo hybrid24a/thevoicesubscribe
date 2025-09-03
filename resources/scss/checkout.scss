@@ -1,0 +1,11 @@
+@use 'normalize.css/normalize';
+@use 'partials/variables' as *;
+@use 'partials/global';
+@use 'partials/form';
+@use 'partials/layout';
+@use 'partials/checkout';
+
+body {
+  font-family: 'Lato', sans-serif;
+  line-height: 1.6;
+}

@@ -1,0 +1,136 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 20px;
+}
+
+table {
+  border-collapse: collapse;
+  border: solid 1px #ccc;
+
+  thead {
+    background-color: #f4f4f4;
+  }
+
+  th {
+    text-align: left;
+    height: 32px;
+  }
+
+  th,
+  td {
+    &:first-child {
+      padding-left: 10px;
+    }
+  }
+
+  tbody tr {
+    border-top: solid 1px #cccccc;
+  }
+
+  td {
+    height: 36px;
+  }
+}
+
+ins {
+  text-decoration: none;
+}
+
+.desktop-only {
+	display: none !important;
+}
+
+@media (min-width:1025px) {
+	.desktop-only {
+		display: block !important;
+	}
+
+	.mobile-only {
+		display: none !important;
+	}
+}
+
+.breadcrumbs {
+  a {
+    text-decoration: none;
+    color: #333333;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  ol {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .sep {
+    display: flex;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+.notices {
+  .notice {
+    padding: 15px;
+    margin: 30px 0 0;
+    border: solid 1px #dddddd;
+    display: flex;
+    justify-content: space-between;
+
+    &.success {
+      background-color: #c9ffc9;
+    }
+
+    &.error {
+      background-color: #ffc9c9;
+    }
+  }
+
+  .notice-message {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .message {
+      color: #333333;
+    }
+
+    .icon {
+      color: #343f65;
+    }
+  }
+
+  .close-notice {
+    font-size: 26px;
+    display: block;
+    line-height: 18px;
+    cursor: pointer;
+    color: #343f65;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

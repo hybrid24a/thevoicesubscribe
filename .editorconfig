@@ -16,3 +16,12 @@ indent_size = 2
 
 [docker-compose.yml]
 indent_size = 4
+
+[*.{php,json}]
+indent_size = 4
+
+[*.blade.php]
+indent_size = 2
+
+[*.{js,vue,css,scss}]
+indent_size = 2

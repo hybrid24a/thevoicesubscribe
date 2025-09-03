@@ -1,0 +1,9 @@
+<mj-section
+  background-color="#ffffff"
+  text-align="left"
+  padding-bottom="5px">
+  <mj-column>
+    <mj-text color="#333333">Vous pouvez suivre l'avancement de votre commande en suivant ce lien:</mj-text>
+    <mj-button background-color="#F45E43" href="{{ route('store.orders.show', $order->getNumber()) }}">Suivre l'avancement de votre commande</mj-button>
+  </mj-column>
+</mj-section>

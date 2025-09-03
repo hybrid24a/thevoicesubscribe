@@ -1,0 +1,4 @@
+<mj-text
+  font-size="18px"
+  font-weight="800"
+  color="#000000">Merci d'avoir choisi {{ $brandName }}!</mj-text>

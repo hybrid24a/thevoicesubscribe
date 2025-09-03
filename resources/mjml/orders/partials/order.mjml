@@ -1,0 +1,69 @@
+<mj-wrapper
+  background-color="#fcfcfc"
+  border-top="1px solid #eeeeee"
+  border-bottom="1px solid #eeeeee"
+  padding="25px 0">
+  <mj-section
+    text-align="left"
+    padding-top="0"
+    padding-bottom="0">
+    <mj-column>
+      <mj-text
+        font-size="16px"
+        font-weight="800"
+        color="#000000"
+        padding-top="0"
+        padding-bottom="20px">Commande #{{ $order->getNumber() }}</mj-text>
+    </mj-column>
+  </mj-section>
+  <mj-section
+    text-align="left"
+    padding-top="0"
+    padding-bottom="0">
+    <mj-column>
+      <mj-table padding-top="0" padding-bottom="0">
+        <tr style="border-bottom:1px solid #aaaaaa; text-align:left;padding:15px 0;">
+          <th style="padding: 0 15px 10px 0;">Produit</th>
+          <th style="padding: 0 15px 10px 0;">Quantité</th>
+          <th style="padding: 0 0 10px 15px;">Prix</th>
+        </tr>
+        @foreach ($order->getOrderItems() as $item)
+        <tr style="height: 50px; border-top: solid 1px #eeeeee;">
+          <td style="padding: 0 15px 0 0;">
+            <div>{{ $item->getTitle() }}</div>
+            @if ($item->getValues())
+            <div class="item-options" style="font-size: 10px; line-height: 1; color: #333333; padding: 0 0 5px;">
+              @foreach ($item->getValues() as $value)
+              <span>
+                @if (!$loop->first)
+                  <span class="sep">/</span>
+                @endif
+                <span>{{ $value }}</span>
+              </span>
+              @endforeach
+            </div>
+            @endif
+          </td>
+          <td style="padding: 0 15px 0 0;">{{ $item->getQuantity() }}</td>
+          <td style="padding: 0;">{!! $item->getObjTotal()->getDisplayLocalPrice() !!}</td>
+        </tr>
+        @endforeach
+        <tr style="border-top: 1px solid #aaaaaa;">
+          <td style="padding: 10px 0 0;"></td>
+          <td style="padding: 10px 15px 0 0;">Sous-total</td>
+          <td style="padding: 10px 0 0;">{!! $order->getObjSubTotal()->getDisplayLocalPrice() !!}</td>
+        </tr>
+        <tr>
+          <td style="padding: 0 15px 0 0;"></td>
+          <td style="padding: 0 15px 0 0;">Expédition</td>
+          <td style="padding: 0;">{!! $order->getObjShippingTotal()->getDisplayLocalPrice() !!}</td>
+        </tr>
+        <tr>
+          <td style="padding: 0 15px 0 0;"></td>
+          <td style="padding: 0 15px 0 0;">Total</td>
+          <td style="padding: 0;">{!! $order->getObjTotal()->getDisplayLocalPrice() !!}</td>
+        </tr>
+      </mj-table>
+    </mj-column>
+  </mj-section>
+</mj-wrapper>
