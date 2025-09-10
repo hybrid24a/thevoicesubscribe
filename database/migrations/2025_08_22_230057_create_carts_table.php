@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('session_id');
             $table->string('external_id');
             $table->string('item');
+            $table->integer('tip')->default(0);
             $table->string('status');
             $table->json('item_details');
             $table->timestamps();

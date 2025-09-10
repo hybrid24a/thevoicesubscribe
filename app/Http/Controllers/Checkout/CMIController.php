@@ -99,7 +99,7 @@ class CMIController extends Controller
 
     public function ok(Request $request, string $number)
     {
-        return redirect('http://the.voice:8080/thank-you?order=' . $number);
+        return redirect(config('app.site_url') . '/thank-you?order=' . $number);
 
         // return redirect()->route('store.orders.show', [
         //     'number'       => $orderId,

@@ -199,7 +199,7 @@ class OrdersService
 
     private function generateOrderNumber(): string
     {
-        $orderNumber = Str::random(8);
+        $orderNumber = Str::random(12);
 
         while ($this->ordersRepository->getByNumber($orderNumber) instanceof Order) {
             $orderNumber = Str::random(8);

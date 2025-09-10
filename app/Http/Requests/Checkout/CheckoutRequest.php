@@ -26,7 +26,7 @@ class CheckoutRequest extends FormRequest
             'Cookie' => 'thevoice_sess=' . $sessionId,
             'Accept' => 'application/json',
         ])->timeout(3)
-            ->get('http://the.voice:8080/wp-json/thevoice/v1/checkout-state');
+            ->get(config('app.site_url') . '/wp-json/thevoice/v1/checkout-state');
 
         $wpData = $response->json();
 
@@ -58,6 +58,6 @@ class CheckoutRequest extends FormRequest
             'Cookie' => 'thevoice_sess=' . $sessionId,
             'Accept' => 'application/json',
         ])->timeout(3)
-            ->post('http://the.voice:8080/wp-json/thevoice/v1/checkout-state/delete');
+            ->post(config('app.site_url') . '/wp-json/thevoice/v1/checkout-state/delete');
     }
 }

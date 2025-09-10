@@ -1,30 +1,24 @@
 <?php
 
-namespace App\Http\Requests\Checkout;
+namespace App\Http\Requests\Api\Auth;
 
 use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
 
-class MakeOrderRequest extends CheckoutRequest
+class RegisterRequest extends FormRequest
 {
     public function rules(): array
     {
-        $isAuthenticated = $this->getWpData()['isAuthenticated'];
-
-        if ($isAuthenticated) {
-            return [];
-        }
-
         return [
             'type'                  => ['required', 'string', 'in:individual,company'],
             'name'                  => ['required', 'string', 'max:255'],
             'ice' => [
                 'required_if:type,company',
-                'nullable',
                 'string',
                 'size:15'
             ],
-            'email'                 => ['required', 'string', 'email', 'unique:users,email'],
-            'password'              => ['required', 'string'],
+            'email'                 => ['required', 'lowercase', 'string', 'email', 'unique:users,email'],
+            'password'              => ['required', 'confirmed', 'string'],
             'password_confirmation' => ['required', 'string', 'same:password'],
         ];
     }

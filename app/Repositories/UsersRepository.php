@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Arr;
 
 class UsersRepository
 {
@@ -25,9 +26,25 @@ class UsersRepository
     {
         return User::query()
             ->create([
+                User::TYPE_COLUMN      => $data[User::TYPE_COLUMN],
                 User::NAME_COLUMN      => $data[User::NAME_COLUMN],
+                User::ICE_COLUMN       => $data[User::ICE_COLUMN],
                 User::EMAIL_COLUMN     => $data[User::EMAIL_COLUMN],
                 User::PASSWORD_COLUMN  => $data[User::PASSWORD_COLUMN],
             ]);
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $data = Arr::only($data, [
+            User::NAME_COLUMN,
+            User::ICE_COLUMN,
+            User::EMAIL_COLUMN,
+            User::PASSWORD_COLUMN,
+        ]);
+
+        return 1 === User::query()
+            ->where(User::ID_COLUMN, $id)
+            ->update($data);
     }
 }

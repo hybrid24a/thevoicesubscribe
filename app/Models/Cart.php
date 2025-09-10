@@ -17,6 +17,7 @@ class Cart extends Model
     const EXTERNAL_ID_COLUMN = 'external_id';
     const STATUS_COLUMN = 'status';
     const ITEM_COLUMN = 'item';
+    const TIP_COLUMN = 'tip';
     const ITEM_DETAILS_COLUMN = 'item_details';
     const CREATED_AT_COLUMN = 'created_at';
     const UPDATED_AT_COLUMN = 'updated_at';
@@ -70,6 +71,11 @@ class Cart extends Model
         return $this->status;
     }
 
+    public function getTip(): int
+    {
+        return $this->tip;
+    }
+
     public function getItem(): string
     {
         return $this->item;
@@ -90,23 +96,6 @@ class Cart extends Model
         return $this->item === Cart::SUBSCRIPTION_ARCHIVE_ITEM;
     }
 
-    public function getItemTitle(): ?string
-    {
-        if ($this->isMagazineItem()) {
-            return $this->item_details['title'] ?? null;
-        }
-
-        if ($this->isSubscriptionItem()) {
-            return 'Abonnement annuel';
-        }
-
-        if ($this->isSubscriptionArchiveItem()) {
-            return 'Abonnement annuel + Archive';
-        }
-
-        return null;
-    }
-
     public function getItemDetails(): ?array
     {
         return $this->item_details;
@@ -114,35 +103,51 @@ class Cart extends Model
 
     public function getDisplayItems(int $price): array
     {
+        $items = [];
+
+        if ($this->getTip() > 0) {
+            $items[] = [
+                'thumbnail' => '/build/images/tips.jpg',
+                'title'     => 'دعم الموقع',
+                'price'     => $this->getTip() . ' Dh',
+            ];
+        }
+
         if ($this->isSubscriptionArchiveItem()) {
-            return [[
+            $items[] = [
                 'thumbnail' => '/build/images/sub-yearly-archive.jpg',
-                'title'     => 'Abonnement annuel + Archive',
-                'price'     => $price . ' MAD',
-            ]];
+                'title'     => 'اشتراك سنوي + أرشيف',
+                'price'     => $price . ' Dh',
+            ];
+
+            return $items;
         }
 
         $details = $this->getItemDetails();
 
         if ($this->isMagazineItem()) {
-            return [[
+            $items[] = [
                 'thumbnail' => $details['thumbnail'] ?? null,
                 'title'     => $details['title'] ?? 'Magazine',
-                'price'     => $price . ' MAD',
-            ]];
+                'subtitle'  => 'العدد ' . $details['number'],
+                'price'     => $price . ' Dh',
+            ];
+
+            return $items;
         }
 
-        $items = [[
+        $items[] = [
             'thumbnail' => '/build/images/sub-yearly.jpg',
-            'title'     => 'Abonnement annuel',
-            'price'     => $price . ' MAD',
-        ]];
+            'title'     => 'اشتراك سنوي',
+            'price'     => $price . ' Dh',
+        ];
 
         if (isset($details['number'])) {
             $items[] = [
                 'thumbnail' => $details['thumbnail'] ?? null,
                 'title'     => $details['title'] ?? 'Magazine',
-                'price'     => 'Gratuit',
+                'subtitle'  => 'العدد ' . $details['number'],
+                'price'     => 'مجاني',
             ];
         }
 
@@ -156,7 +161,12 @@ class Cart extends Model
 
     public function getTotal(): float
     {
-        return $this->total;
+        return $this->total + $this->getTip();
+    }
+
+    public function getFormattedTotal(): string
+    {
+        return number_format($this->getTotal(), 2);
     }
 
     public function setUser(?User $user): void

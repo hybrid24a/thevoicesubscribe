@@ -14,16 +14,20 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens;
 
     const ID_COLUMN = 'id';
+    const TYPE_COLUMN = 'type';
     const NAME_COLUMN = 'name';
+    const ICE_COLUMN = 'ice';
     const EMAIL_COLUMN = 'email';
     const PASSWORD_COLUMN = 'password';
     const REMEMBER_TOKEN_COLUMN = 'remember_token';
     const EMAIL_VERIFIED_AT_COLUMN = 'email_verified_at';
 
     protected $fillable = [
+        self::TYPE_COLUMN,
         self::NAME_COLUMN,
         self::EMAIL_COLUMN,
         self::PASSWORD_COLUMN,
+        self::ICE_COLUMN,
     ];
 
     protected $hidden = [
@@ -50,9 +54,29 @@ class User extends Authenticatable
         return $this->getAttribute(self::ID_COLUMN);
     }
 
+    public function getType(): string
+    {
+        return $this->getAttribute(self::TYPE_COLUMN);
+    }
+
+    public function isIndividual(): bool
+    {
+        return $this->getType() === 'individual';
+    }
+
+    public function isCompany(): bool
+    {
+        return $this->getType() === 'company';
+    }
+
     public function getName(): string
     {
         return $this->getAttribute(self::NAME_COLUMN);
+    }
+
+    public function getIce(): ?string
+    {
+        return $this->getAttribute(self::ICE_COLUMN);
     }
 
     public function getEmail(): string

@@ -2,33 +2,42 @@
 
 namespace App\Http\Controllers\Api\Users;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\EditRequest;
+use App\Services\UsersService;
+use App\Transformers\UsersTransformer;
 
 
 class EditUserController extends Controller
 {
-    public function update(Request $request)
+    /** @var \App\Services\UsersService */
+    private $usersService;
+
+    /** @var UsersTransformer */
+    private $usersTransformer;
+
+    public function __construct(
+        UsersService $usersService,
+        UsersTransformer $usersTransformer
+    ) {
+        $this->usersService = $usersService;
+        $this->usersTransformer = $usersTransformer;
+    }
+
+    public function update(EditRequest $request)
     {
-        // lets get user by token
         $user = $request->user();
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-        ]);
+        $this->usersService->update($user, $request->getUserData());
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $user->update($request->only('name'));
+        $userData = $this->usersTransformer->transform($user);
 
         return response()->json([
             'message' => 'User updated successfully',
-            'user' => $user
+            'user'    => $userData
         ], 200);
     }
 

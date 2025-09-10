@@ -56,6 +56,8 @@ return [
 
     'checkout_url' => env('APP_CHECKOUT_URL', 'http://checkout.localhost'),
 
+    'site_url' => env('APP_SITE_URL', 'http://localhost'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

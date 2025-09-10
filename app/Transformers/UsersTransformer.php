@@ -12,7 +12,9 @@ class UsersTransformer
         $userData = [
             'user'  => [
                 'id'    => $user->getId(),
+                'type'  => $user->getType(),
                 'name'  => $user->getName(),
+                'ice'   => $user->getIce(),
                 'email' => $user->getEmail(),
             ],
         ];
@@ -25,7 +27,7 @@ class UsersTransformer
             ];
         }
 
-        if ($user->getEntitlements()->isNotEmpty()) {
+        if ($user->getEntitlements() && $user->getEntitlements()->isNotEmpty()) {
             $userData['user']['entitlements'] = $user->getEntitlements()->map(function (UserEntitlements $entitlement) {
                 return [
                     'type'    => $entitlement->getItemType(),

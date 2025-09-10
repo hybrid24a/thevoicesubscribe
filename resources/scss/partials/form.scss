@@ -2,11 +2,11 @@
 
 .button {
   cursor: pointer;
-  padding: 0 10px;
+  padding: 0 15px;
   background-color: #000000;
   color: #ffffff;
   border: none;
-  line-height: 36px;
+  line-height: 44px;
   transition: all 300ms ease-in-out;
   display: inline-block;
   text-decoration: none;
@@ -76,47 +76,6 @@ textarea {
   color: #e74c3c;
 }
 
-.form-input {
-  margin: 0 0 20px;
-
-  &:last-child {
-    margin: 0;
-  }
-
-  .error {
-    margin: 10px 0 0;
-  }
-
-  label {
-    margin: 0 0 10px;
-    font-size: 14px;
-    display: block;
-  }
-
-  .radio-wrapper {
-    label {
-      margin: 0;
-    }
-  }
-
-  &.side-label-input {
-    display: grid;
-    gap: 10px;
-
-    label {
-      padding: 0;
-      margin: 0;
-    }
-  }
-
-  .description {
-    margin: 10px 0 0;
-    font-size: 12px;
-    color: #555555;
-    line-height: 1.5;
-  }
-}
-
 .checkbox-wrapper {
   .label {
     cursor: pointer;
@@ -145,132 +104,9 @@ textarea {
     display: flex;
     gap: 15px;
   }
-}
 
-.single-option {
-  position: relative;
-
-  .empty-text {
-    line-height: 26px;
-    color: #666666;
-  }
-
-  .selected-value {
-    background: #ffffff;
-    position: relative;
+  input {
     cursor: pointer;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    padding: 0 10px;
-    line-height: 36px;
-    width: 100%;
-    border: solid 1px #cccccc;
-
-    .icon {
-      position: absolute;
-      right: 7px;
-      top: 50%;
-      transform: translate(0, -50%);
-      line-height: 1;
-    }
-
-    ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-
-      li {
-        margin: 0 5px 5px 0;
-        padding: 0 20px 0 5px;
-        line-height: 26px;
-        border: solid 1px #dddddd;
-        background-color: #eeeeee;
-        position: relative;
-        cursor: grab;
-
-        &.sortable-chosen {
-          cursor: grabbing;
-        }
-
-        .delete-button {
-          position: absolute;
-          top: 50%;
-          right: 1px;
-          font-size: 18px;
-          line-height: 1;
-          width: 16px;
-          text-align: center;
-          transform: translate(0, -50%);
-          opacity: 0.5;
-          z-index: 1;
-          cursor: pointer;
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-
-        &:last-child {
-          margin-right: 0;
-        }
-      }
-    }
-  }
-
-  .select-dropdown {
-    background-color: #f9f9f9;
-    box-shadow: 2px 4px 10px -5px rgb(0 0 0 / 67%);
-    position: absolute;
-    top: 100%;
-    left: 0;
-    border: solid 1px #aaaaaa;
-    border-top: none;
-    z-index: 2;
-    min-width: 100%;
-
-    input {
-      width: 100%;
-      line-height: 24px;
-      padding: 0 10px;
-    }
-
-    .select-search {
-      padding: 10px;
-      border-bottom: solid 1px #eeeeee;
-    }
-
-    ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      max-height: 318px;
-      overflow-y: scroll;
-    }
-
-    li {
-      line-height: 30px;
-      padding: 0 10px;
-      cursor: pointer;
-      white-space: nowrap;
-
-      &:hover,
-      &.selected {
-        background-color: #2b6dbb;
-        color: #ffffff;
-      }
-
-      &.label {
-        line-height: 30px;
-        padding: 0 10px;
-        background-color: #eeeeee !important;
-        color: #666666 !important;
-        cursor: text;
-      }
-    }
   }
 }
 
@@ -280,27 +116,16 @@ textarea {
   }
 }
 
-/* Set the theme color of the component */
-$themeColor: #343f65;
-
-/* import theme style */
-
-@media (min-width: $small) {
-  .form-input {
-    &.side-label-input {
-      grid-template-columns: 165px 1fr;
-
-      label {
-        padding: 10px 0 0;
-      }
+.rtl {
+  .checkbox-wrapper {
+    .text {
+      margin: 0 10px 0 0;
     }
   }
-}
 
-@media (min-width: $large) {
-  .form-input {
-    &.side-label-input {
-      grid-template-columns: 250px 400px;
+  .radio-wrapper {
+    .text {
+      margin: 0 10px 0 0;
     }
   }
 }

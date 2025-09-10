@@ -38,7 +38,7 @@ class CMIService
             'okUrl'       => route('checkout.cmi.ok'),
             'failUrl'     => route('checkout.cmi.fail'),
             'callbackUrl' => route('checkout.cmi.callback'),
-            'shopurl'     => 'http://the.voice:8080',
+            'shopurl'     => config('app.site_url'),
             'currency'    => '504',
             'BillToName'  => $user->getName(),
             'email'       => $user->getEmail(),

@@ -3,44 +3,44 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Models\User;
+use App\Services\UsersService;
+use App\Transformers\UsersTransformer;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+    /** @var \App\Services\UsersService */
+    private $usersService;
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
+    /** @var UsersTransformer */
+    private $usersTransformer;
+
+    public function __construct(
+        UsersService $usersService,
+        UsersTransformer $usersTransformer
+    ) {
+        $this->usersService = $usersService;
+        $this->usersTransformer = $usersTransformer;
+    }
+
+    public function store(RegisterRequest $request)
+    {
+        $user = $this->usersService->create($request->getUserData());
 
         event(new Registered($user));
 
         $token = $user->createToken('wp-backend')->plainTextToken;
 
-        return response()->json([
-            'user' => [
-                'id'    => $user->id,
-                'name'  => $user->name,
-                'email' => $user->email,
-            ],
-            'token' => $token
-        ], 201);
+
+        $token = $user->createToken('wp-backend')->plainTextToken;
+
+        $data = $this->usersTransformer->transform($user);
+        $data['token'] = $token;
+
+        return response()->json($data, 201);
     }
 }

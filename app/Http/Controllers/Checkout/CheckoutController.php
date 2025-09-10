@@ -40,13 +40,13 @@ class CheckoutController extends Controller
         $sessionId = $request->getSessionId();
 
         if (!$sessionId) {
-            return redirect('http://the.voice:8080/');
+            return redirect(config('app.site_url'));
         }
 
         $wpData = $request->getWpData();
 
         if (empty($wpData['cartData'])) {
-            return redirect('http://the.voice:8080/');
+            return redirect(config('app.site_url'));
         }
 
         $cartData = $wpData['cartData'];
@@ -58,7 +58,13 @@ class CheckoutController extends Controller
         }
 
         if ($item === Cart::MAGAZINE_ITEM && $itemDetails['is_free']) {
-            return redirect('http://the.voice:8080/account');
+            return redirect(config('app.site_url') . '/account');
+        }
+
+        $tip = $cartData['tip'] ?? 0;
+
+        if (!is_int($tip) || $tip < 10) {
+            $tip = 0;
         }
 
         $user = $wpData['user'];
@@ -71,7 +77,7 @@ class CheckoutController extends Controller
                         isset($itemDetails['number']) &&
                         $entitlement->getItemDetails()['number'] === $itemDetails['number']) {
 
-                        return redirect('http://the.voice:8080/account');
+                        return redirect(config('app.site_url') . '/account');
                     }
                 }
             }
@@ -82,18 +88,18 @@ class CheckoutController extends Controller
 
                 // if downgrade
                 if ($item === Subscription::YEARLY_PLAN && $currentPlan === Subscription::YEARLY_ARCHIVE_PLAN) {
-                    return redirect('http://the.voice:8080/account');
+                    return redirect(config('app.site_url') . '/account');
                 }
 
                 // if magazine item and yearly archive plan
                 if ($item === Cart::MAGAZINE_ITEM && $currentPlan === Subscription::YEARLY_ARCHIVE_PLAN) {
-                    return redirect('http://the.voice:8080/account');
+                    return redirect(config('app.site_url') . '/account');
                 }
 
                 // if magazine item and yearly plan, check date
                 if ($item === Cart::MAGAZINE_ITEM && $currentPlan === Subscription::YEARLY_PLAN) {
                     if (!$itemDetails['date']) {
-                        return redirect('http://the.voice:8080/account');
+                        return redirect(config('app.site_url') . '/account');
                     }
 
                     $itemDate = Carbon::createFromFormat('Y-m-d H:i:s', $itemDetails['date']);
@@ -102,7 +108,7 @@ class CheckoutController extends Controller
                     $activeSubscriptionTo = $activeSubscription->getTo();
 
                     if ($itemDate->between($activeSubscriptionFrom, $activeSubscriptionTo)) {
-                        return redirect('http://the.voice:8080/account');
+                        return redirect(config('app.site_url') . '/account');
                     }
                 }
             }
@@ -114,6 +120,7 @@ class CheckoutController extends Controller
             $this->cartsService->update($cart, [
                 Cart::ITEM_COLUMN         => $item,
                 Cart::ITEM_DETAILS_COLUMN => $itemDetails,
+                Cart::TIP_COLUMN          => $tip,
             ]);
 
             $cart = $this->cartsService->getById($cart->getId());
@@ -124,6 +131,7 @@ class CheckoutController extends Controller
                 Cart::EXTERNAL_ID_COLUMN  => $cartData['id'],
                 Cart::ITEM_COLUMN         => $item,
                 Cart::ITEM_DETAILS_COLUMN => $itemDetails,
+                Cart::TIP_COLUMN          => $tip,
                 Cart::STATUS_COLUMN       => Cart::PENDING_STATUS,
             ]);
         }
@@ -131,11 +139,16 @@ class CheckoutController extends Controller
         $price = $cartData['price'];
         $price = number_format($price, 2);
 
+        if ($tip > 0) {
+            $tip = number_format($tip, 2);
+        }
+
         return view('payment', [
             'isAuthenticated' => $wpData['isAuthenticated'],
             'user'            => $user,
             'cart'            => $cart,
             'price'           => $price,
+            'tip'             => $tip,
         ]);
     }
 
@@ -144,20 +157,20 @@ class CheckoutController extends Controller
         $sessionId = $request->getSessionId();
 
         if (!$sessionId) {
-            return redirect('http://the.voice:8080/');
+            return redirect(config('app.site_url'));
         }
 
         $wpData = $request->getWpData();
 
         if (empty($wpData['cartData'])) {
-            return redirect('http://the.voice:8080/');
+            return redirect(config('app.site_url'));
         }
 
         $cartData = $wpData['cartData'];
         $cart = $this->cartsService->getBySessionAndExternalId($sessionId, $cartData['id']);
 
         if (!$cart instanceof Cart) {
-            return redirect('http://the.voice:8080/');
+            return redirect(config('app.site_url'));
         }
 
         $user = $wpData['user'];
@@ -199,6 +212,6 @@ class CheckoutController extends Controller
 
     public function checkoutLogin()
     {
-        return redirect('http://the.voice:8080/login?redirect_to=checkout');
+        return redirect(config('app.site_url') . '/login?redirect_to=checkout');
     }
 }

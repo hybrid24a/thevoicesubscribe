@@ -1,6 +1,14 @@
 @use './variables' as *;
 
-.checkout-content {
+.checkout-desktop-header {
+  display: none;
+}
+
+.checkout-mobile-header {
+  margin: 25px 0;
+}
+
+.checkout-page {
   .site-branding {
     a {
       color: #333333;
@@ -25,7 +33,22 @@
 
   .breadcrumbs {
     margin: 0 0 30px;
+
+
+    a {
+      text-decoration: none;
+      color: #2a7fe1;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
+}
+
+.checkout-content {
+  display: flex;
+  flex-direction: column-reverse;
 
   .input-wrapper {
     input[type=text] {
@@ -51,10 +74,6 @@
   .inputs-group-2-col {
     display: grid;
     gap: 15px;
-  }
-
-  .single-option .selected-value {
-    border: solid 1px #999999;
   }
 
   .form {
@@ -126,7 +145,6 @@
 }
 
 .cart-summary-wrapper {
-  margin: 0 0 30px;
   padding: 20px;
   border: solid 1px #e1e1e1;
   background-color: #eeeeee;
@@ -150,17 +168,28 @@
   .item-total {
     width: 150px;
     text-align: right;
+    direction: ltr;
   }
 
   .item-media {
     position: relative;
     width: 60px;
+    height: 87.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 
     img {
       max-width: 100%;
       height: auto;
       display: block;
     }
+  }
+
+  .item-subtitle {
+    line-height: 1;
+    font-size: 13px;
   }
 
   .item-title {
@@ -170,6 +199,8 @@
   .item-options {
     margin: 5px 0 0;
     color: #777777;
+    direction: ltr;
+    line-height: 1;
   }
 
   .cart-total-wrapper {
@@ -183,6 +214,10 @@
   .shipping-total {
     display: flex;
     justify-content: space-between;
+
+    .total-value {
+      direction: ltr;
+    }
   }
 
   .shipping-total {
@@ -315,96 +350,6 @@
   }
 }
 
-.checkout-section {
-  display: grid;
-  gap: 30px;
-
-  .methods {
-    ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      border: solid 1px #cccccc;
-    }
-
-    .method-header {
-      cursor: pointer;
-      padding: 10px 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      h3 {
-        line-height: 1.7;
-        margin: 0;
-      }
-    }
-
-    .circle {
-      width: 18px;
-      height: 18px;
-      display: block;
-      border-radius: 15px;
-      border: solid 1px #cccccc;
-    }
-
-    .method-content {
-      display: none;
-      border-top: solid 1px #cccccc;
-      background-color: #f9f9f9;
-      padding: 15px 15px;
-      min-height: 80px;
-
-      p {
-        margin: 0;
-        line-height: 1.5;
-        text-align: justify;
-      }
-    }
-
-    li {
-      border-bottom: solid 1px #cccccc;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      &.display {
-        .method-content {
-          display: block;
-        }
-
-        .circle {
-          background-color: #343f65;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          &:before {
-            content: "";
-            width: 5px;
-            height: 5px;
-            display: block;
-            border-radius: 15px;
-            background-color: #ffffff;
-          }
-        }
-      }
-    }
-  }
-
-  .no-results h3 {
-    margin: 0;
-    color: #666666;
-  }
-}
-
 .checkout-information-wrapper {
   border: solid 1px #ccc;
   padding: 10px 15px;
@@ -427,9 +372,9 @@
       padding: 0;
     }
 
-    .left {
+    .start {
       display: grid;
-      grid-template-columns: 80px 1fr;
+      grid-template-columns: 120px 1fr;
     }
   }
 }
@@ -462,6 +407,14 @@
 }
 
 @media (min-width: $large) {
+  .checkout-desktop-header {
+    display: block;
+  }
+
+  .checkout-mobile-header {
+    display: none;
+  }
+
   .checkout-content {
     display: grid;
     grid-template-columns: 1fr 450px;
@@ -490,6 +443,32 @@
       left: 0;
       width: 300%;
       z-index: -1;
+    }
+  }
+}
+
+.rtl {
+  .cart-summary {
+    .item-total {
+      text-align: left;
+    }
+  }
+
+  .checkout-information-form-wrapper {
+    .note {
+      ul {
+        padding: 0 15px 0 0;
+      }
+    }
+  }
+
+  @media (min-width: $large) {
+    .checkout-main-content {
+      padding: 40px 0 40px 50px;
+    }
+
+    .cart-summary-wrapper {
+      padding: 40px 50px 40px 0;
     }
   }
 }

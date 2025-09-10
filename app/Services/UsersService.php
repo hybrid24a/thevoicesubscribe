@@ -72,6 +72,15 @@ class UsersService
         return $user;
     }
 
+    public function update(User $user, array $data): bool
+    {
+        if (isset($data[User::PASSWORD_COLUMN])) {
+            $data[User::PASSWORD_COLUMN] = Hash::make($data[User::PASSWORD_COLUMN]);
+        }
+
+        return $this->usersRepository->update($user->getId(), $data);
+    }
+
     public function updateWpSession(User $user, string $sessionId)
     {
         $userData = $this->usersTransformer->transform($user);
@@ -79,7 +88,7 @@ class UsersService
         $res = Http::withHeaders([
             'Cookie' => 'thevoice_sess=' . $sessionId,
             'Accept' => 'application/json',
-        ])->post('http://the.voice:8080/wp-json/thevoice/v1/session/refresh', $userData);
+        ])->post(config('app.site_url') . '/wp-json/thevoice/v1/session/refresh', $userData);
     }
 
     public function hydrate(User $user): User

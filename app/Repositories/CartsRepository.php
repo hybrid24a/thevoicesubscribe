@@ -42,6 +42,7 @@ class CartsRepository
                 Cart::ITEM_COLUMN         => $data[Cart::ITEM_COLUMN],
                 Cart::ITEM_DETAILS_COLUMN => $data[Cart::ITEM_DETAILS_COLUMN],
                 Cart::STATUS_COLUMN       => $data[Cart::STATUS_COLUMN],
+                Cart::TIP_COLUMN          => $data[Cart::TIP_COLUMN] ?? 0,
             ]);
     }
 
@@ -52,6 +53,7 @@ class CartsRepository
             Cart::ITEM_COLUMN,
             Cart::ITEM_DETAILS_COLUMN,
             Cart::STATUS_COLUMN,
+            Cart::TIP_COLUMN,
         ]);
 
         return 1 === Cart::query()
