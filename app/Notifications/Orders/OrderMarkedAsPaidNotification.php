@@ -39,8 +39,8 @@ class OrderMarkedAsPaidNotification extends Notification
         $invoicePath = $this->order->getInvoicePath();
         $invoicePath = storage_path('app/public/' . $invoicePath);
 
-        return $makeOrderEmail->subject('Nous avons reçu votre paiement')
+        return $makeOrderEmail->subject('لقد استلمنا دفعتك')
             ->to($notifiable->email)
             ->attach($invoicePath);
-    }
+        }
 }

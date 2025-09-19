@@ -33,7 +33,7 @@ class ResetPasswordNotification extends Notification
         $minutes  = (int) config("auth.passwords.$broker.expire");
 
         return (new MailMessage)
-            ->subject('Reset your password')
+            ->subject('إعادة تعيين كلمة المرور')
             ->markdown('emails.auth.reset-password', [
                 'url'       => $this->url,
                 'brandName' => $this->brandName,
