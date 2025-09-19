@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\OrdersService;
 use App\Services\UsersService;
 use App\Transformers\UsersTransformer;
 use Illuminate\Http\JsonResponse;
@@ -18,12 +19,17 @@ class LoginController extends Controller
     /** @var UsersTransformer */
     private $usersTransformer;
 
+    /** @var OrdersService */
+    private $ordersService;
+
     public function __construct(
         UsersService $usersService,
-        UsersTransformer $usersTransformer
+        UsersTransformer $usersTransformer,
+        OrdersService $ordersService
     ) {
         $this->usersService = $usersService;
         $this->usersTransformer = $usersTransformer;
+        $this->ordersService = $ordersService;
     }
 
     public function store(LoginRequest $request): JsonResponse
@@ -44,7 +50,8 @@ class LoginController extends Controller
 
         $token = $user->createToken('wp-backend')->plainTextToken;
 
-        $userData = $this->usersTransformer->transform($user);
+        $orders = $this->ordersService->getFulfilledByUser($user);
+        $userData = $this->usersTransformer->transform($user, $orders);
 
         $userData['token'] = $token;
 

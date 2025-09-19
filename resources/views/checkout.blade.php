@@ -31,7 +31,7 @@
               </div>
               <div class="items-list">
                 <ul>
-                  @foreach ($cart->getDisplayItems($price) as $displayItem)
+                  @foreach ($cart->getDisplayItems() as $displayItem)
                   <li>
                     <div class="item">
                       <div class="item-details with-image">
@@ -55,10 +55,6 @@
                 </ul>
               </div>
               <div class="cart-total-wrapper">
-                <div class="cart-subtotal">
-                    <span class="total-text">المجموع الفرعي</span>
-                  <span class="total-value">{{ $cart->getFormattedTotal() }} Dh</span>
-                </div>
                 <div class="cart-total">
                   <div class="total-left">
                     <span class="total-text">المجموع</span>

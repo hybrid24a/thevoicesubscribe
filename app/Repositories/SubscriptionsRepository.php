@@ -29,6 +29,14 @@ class SubscriptionsRepository
             ->first();
     }
 
+    public function getAllByUserId(int $userId)
+    {
+        return Subscription::query()
+            ->where(Subscription::USER_ID_COLUMN, $userId)
+            ->orderByDesc(Subscription::TO_COLUMN)
+            ->get();
+    }
+
     public function create(array $data): Subscription
     {
         return Subscription::query()->create([

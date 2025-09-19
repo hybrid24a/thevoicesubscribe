@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -46,8 +48,14 @@ class User extends Authenticatable
     /** @var Subscription|null */
     private $activeSubscription;
 
+    /** @var Collection|Subscription[] */
+    private $subscriptions;
+
     /** @var Collection|UserEntitlements[] */
     private $entitlements;
+
+    /** @var Collection|Order[] */
+    private $orders;
 
     public function getId(): int
     {
@@ -84,6 +92,18 @@ class User extends Authenticatable
         return $this->getAttribute(self::EMAIL_COLUMN);
     }
 
+    /**
+     * @return Collection|Subscription[]
+     */
+    public function getSubscriptions()
+    {
+        if (!($this->subscriptions instanceof Collection)) {
+            return collect();
+        }
+
+        return $this->subscriptions;
+    }
+
     public function getActiveSubscription(): ?Subscription
     {
         return $this->activeSubscription;
@@ -102,9 +122,26 @@ class User extends Authenticatable
         return $this->entitlements;
     }
 
+    /**
+     * @return Collection|Order[]
+     */
+    public function getOrders()
+    {
+        if (!($this->orders instanceof Collection)) {
+            return collect();
+        }
+
+        return $this->orders;
+    }
+
     public function setActiveSubscription(?Subscription $subscription): void
     {
         $this->activeSubscription = $subscription;
+    }
+
+    public function setSubscriptions(Collection $subscriptions): void
+    {
+        $this->subscriptions = $subscriptions;
     }
 
     /**
@@ -113,5 +150,21 @@ class User extends Authenticatable
     public function setEntitlements(Collection $entitlements): void
     {
         $this->entitlements = $entitlements;
+    }
+
+    /**
+     * @param Collection|Order[] $orders
+     */
+    public function setOrders(Collection $orders): void
+    {
+        $this->orders = $orders;
+    }
+
+    // app/Models/User.php
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = config('app.site_url') . '/reset-password?token=' . $token . '&email=' . urlencode($this->getEmailForPasswordReset());
+
+        $this->notify(new ResetPasswordNotification($url));
     }
 }

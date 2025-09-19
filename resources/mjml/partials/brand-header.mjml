@@ -3,7 +3,7 @@
   text-align="center">
   <mj-column>
     <mj-image
-      src="/build/images/the-voice-logo.png"
+      src="{{ $brandLogo }}"
       align="center"
       width="200px"
       padding="0"

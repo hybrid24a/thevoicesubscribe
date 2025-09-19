@@ -27,6 +27,11 @@ class SubscriptionsService
         return $this->subscriptionsRepository->getActiveByUserId($userId);
     }
 
+    public function getAllByUserId(int $userId)
+    {
+        return $this->subscriptionsRepository->getAllByUserId($userId);
+    }
+
     public function create(array $data): Subscription
     {
         return $this->subscriptionsRepository->create($data);

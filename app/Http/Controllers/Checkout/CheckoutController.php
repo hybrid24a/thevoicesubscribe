@@ -13,6 +13,7 @@ use App\Services\OrdersService;
 use App\Services\UsersService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -104,11 +105,15 @@ class CheckoutController extends Controller
 
                     $itemDate = Carbon::createFromFormat('Y-m-d H:i:s', $itemDetails['date']);
 
-                    $activeSubscriptionFrom = $activeSubscription->getFrom();
-                    $activeSubscriptionTo = $activeSubscription->getTo();
+                    $subscriptions = $user->getSubscriptions();
 
-                    if ($itemDate->between($activeSubscriptionFrom, $activeSubscriptionTo)) {
-                        return redirect(config('app.site_url') . '/account');
+                    foreach ($subscriptions as $subscription) {
+                        $from = $subscription->getFrom();
+                        $to = $subscription->getTo();
+
+                        if ($itemDate->between($from, $to)) {
+                            return redirect(config('app.site_url') . '/account');
+                        }
                     }
                 }
             }
@@ -116,11 +121,14 @@ class CheckoutController extends Controller
 
         $cart = $this->cartsService->getBySessionAndExternalId($sessionId, $cartData['id']);
 
+        $price = $this->getItemPrice($item);
+
         if ($cart instanceof Cart) {
             $this->cartsService->update($cart, [
                 Cart::ITEM_COLUMN         => $item,
                 Cart::ITEM_DETAILS_COLUMN => $itemDetails,
                 Cart::TIP_COLUMN          => $tip,
+                Cart::PRICE_COLUMN        => $price,
             ]);
 
             $cart = $this->cartsService->getById($cart->getId());
@@ -129,26 +137,22 @@ class CheckoutController extends Controller
                 Cart::USER_ID_COLUMN      => $user instanceof User ? $user->getId() : null,
                 Cart::SESSION_ID_COLUMN   => $sessionId,
                 Cart::EXTERNAL_ID_COLUMN  => $cartData['id'],
+                Cart::STATUS_COLUMN       => Cart::PENDING_STATUS,
                 Cart::ITEM_COLUMN         => $item,
                 Cart::ITEM_DETAILS_COLUMN => $itemDetails,
                 Cart::TIP_COLUMN          => $tip,
-                Cart::STATUS_COLUMN       => Cart::PENDING_STATUS,
+                Cart::PRICE_COLUMN        => $price,
             ]);
         }
 
         $price = $cartData['price'];
         $price = number_format($price, 2);
 
-        if ($tip > 0) {
-            $tip = number_format($tip, 2);
-        }
-
         return view('payment', [
             'isAuthenticated' => $wpData['isAuthenticated'],
             'user'            => $user,
             'cart'            => $cart,
             'price'           => $price,
-            'tip'             => $tip,
         ]);
     }
 
@@ -204,7 +208,6 @@ class CheckoutController extends Controller
 
 
         $order = $this->ordersService->getByNumber($order->getNumber());
-        $this->ordersService->markPaymentAsPaid($order);
         $this->ordersService->fulfillOrder($order);
 
         return view('simulate-cmi', ['order' => $order]);
@@ -213,5 +216,18 @@ class CheckoutController extends Controller
     public function checkoutLogin()
     {
         return redirect(config('app.site_url') . '/login?redirect_to=checkout');
+    }
+
+    private function getItemPrice(string $item): int
+    {
+        if (isset(Cart::AVAILABLE_ITEMS[$item])) {
+            return Cart::AVAILABLE_ITEMS[$item]['price'];
+        }
+
+        if (isset(Subscription::AVAILABLE_PLANS[$item])) {
+            return Subscription::AVAILABLE_PLANS[$item]['price'];
+        }
+
+        return 0;
     }
 }

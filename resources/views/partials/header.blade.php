@@ -1,7 +1,7 @@
 <div class="site-branding">
   <div class="brand-logo">
     <a href="">
-      <img src="/build/images/the-voice-logo.png" alt="logo" />
+      <img src="{{ asset('/build/images/the-voice-logo.png') }}" alt="logo" />
     </a>
   </div>
 </div>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use App\Models\Order;
 use App\Models\Cart;
 use App\Models\PaymentDetails;
@@ -32,13 +33,17 @@ class OrdersService
     /** @var UsersEntitlementsService */
     private $usersEntitlementsService;
 
+    /** @var InvoicesService */
+    private $invoicesService;
+
     public function __construct(
         OrdersRepository $ordersRepository,
         UsersService $usersService,
         PaymentDetailsService $paymentDetailsService,
         SubscriptionsService $subscriptionsService,
         CartsService $cartsService,
-        UsersEntitlementsService $usersEntitlementsService
+        UsersEntitlementsService $usersEntitlementsService,
+        InvoicesService $invoicesService
     ) {
         $this->ordersRepository = $ordersRepository;
         $this->usersService = $usersService;
@@ -46,14 +51,15 @@ class OrdersService
         $this->subscriptionsService = $subscriptionsService;
         $this->cartsService = $cartsService;
         $this->usersEntitlementsService = $usersEntitlementsService;
+        $this->invoicesService = $invoicesService;
     }
 
-    public function getById(int $id): ?Order
+    public function getById(int $id, bool $hydrateUser = true): ?Order
     {
         $order = $this->ordersRepository->getById($id);
 
         if ($order instanceof Order) {
-            $order = $this->hydrate($order);
+            $order = $this->hydrate($order, $hydrateUser);
         }
 
         return $order;
@@ -81,6 +87,34 @@ class OrdersService
         return $order;
     }
 
+    /**
+     * @return Collection|Order[]
+     */
+    public function getByUser(User $user)
+    {
+        $orders = $this->ordersRepository->getByUserId($user->getId());
+
+        foreach ($orders as $key => $order) {
+            $orders[$key] = $this->getById($order->getId(), false);
+        }
+
+        return $orders;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getFulfilledByUser(User $user)
+    {
+        $orders = $this->ordersRepository->getFulfilledByUserId($user->getId());
+
+        foreach ($orders as $key => $order) {
+            $orders[$key] = $this->getById($order->getId(), false);
+        }
+
+        return $orders;
+    }
+
     public function create(array $data): Order
     {
         return $this->ordersRepository->create($data);
@@ -96,7 +130,8 @@ class OrdersService
             Order::STATUS_COLUMN        => Order::OPEN_STATUS,
             Order::ITEM_COLUMN          => $cart->getItem(),
             Order::ITEM_DETAILS_COLUMN  => $cart->getItemDetails(),
-            Order::TOTAL_COLUMN         => $cart->getTotal(),
+            Order::PRICE_COLUMN         => $cart->getPrice(),
+            Order::TIP_COLUMN           => $cart->getTip(),
         ]);
 
         $this->paymentDetailsService->create($order, [
@@ -107,33 +142,32 @@ class OrdersService
 
         $order = $this->getById($order->getId());
 
-        // if ($order->getItem)
-
         return $order;
+    }
+
+    public function update(Order $order, array $data): bool
+    {
+        return $this->ordersRepository->update($order->getId(), $data);
     }
 
     public function markPaymentAsPaid(Order $order)
     {
-        $isUpdated = $this->paymentDetailsService->update($order->getLastPaymentDetails(), [
+        return $this->paymentDetailsService->update($order->getLastPaymentDetails(), [
             PaymentDetails::STATUS_COLUMN => PaymentDetails::PAID_STATUS,
         ]);
-
-        if ($isUpdated) {
-            event(new OrderMarkedAsPaid($order));
-        }
-
-        return $isUpdated;
     }
 
     public function markAsFulfilled(Order $order): bool
     {
-        return $this->ordersRepository->update($order->getId(), [
+        return $this->update($order, [
             Order::STATUS_COLUMN => Order::FULFILLED_STATUS,
         ]);
     }
 
     public function fulfillOrder(Order $order)
     {
+        $this->markPaymentAsPaid($order);
+
         if ($order->haveASubscriptionItem()) {
             $this->subscriptionsService->subscribe($order->getUserId(), $order->getItem());
         }
@@ -146,7 +180,19 @@ class OrdersService
         $this->markAsFulfilled($order);
         $user = $this->usersService->getById($order->getUserId());
 
-        $this->usersService->updateWpSession($user, $order->getCart()->getSessionId());
+        $invoicePath = $this->invoicesService->generateInvoice($order);
+
+        $this->update($order, [
+            Order::INVOICE_PATH_COLUMN => $invoicePath,
+        ]);
+
+        $order->setInvoicePath($invoicePath);
+
+        $orders = $this->getFulfilledByUser($user);
+
+        $this->usersService->updateWpSession($user, $order->getCart()->getSessionId(), $orders);
+
+        event(new OrderMarkedAsPaid($order));
     }
 
     public function updatePayload(Order $order, array $payload): bool
@@ -156,11 +202,15 @@ class OrdersService
         ]);
     }
 
-    private function hydrate(Order $order): Order
+    private function hydrate(Order $order, bool $hydrateUser): Order
     {
-        $order = $this->hydrateUser($order);
+        if ($hydrateUser) {
+            $order = $this->hydrateUser($order);
+        }
+
         $order = $this->hydratePaymentDetails($order);
         $order = $this->hydrateCart($order);
+        $order = $this->hydrateTotal($order);
 
         return $order;
     }
@@ -193,6 +243,15 @@ class OrdersService
         if ($cart instanceof Cart) {
             $order->setCart($cart);
         }
+
+        return $order;
+    }
+
+    private function hydrateTotal(Order $order): Order
+    {
+        $order->setTotal($order->getPrice() + $order->getTip());
+        $total = $order->getPrice() + $order->getTip();
+        $order->setTotal($total);
 
         return $order;
     }

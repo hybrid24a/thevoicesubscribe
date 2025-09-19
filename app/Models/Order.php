@@ -5,24 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use App\Traits\CartOrderCommonTrait;
 
 class Order extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, CartOrderCommonTrait;
 
     protected $guarded = [];
 
-    const ID_COLUMN = 'id';
     const NUMBER_COLUMN = 'number';
-    const USER_ID_COLUMN = 'user_id';
     const CART_ID_COLUMN = 'cart_id';
-    const STATUS_COLUMN = 'status';
-    const ITEM_COLUMN = 'item';
-    const ITEM_DETAILS_COLUMN = 'item_details';
-    const TOTAL_COLUMN = 'total';
-    const CREATED_AT_COLUMN = 'created_at';
-    const UPDATED_AT_COLUMN = 'updated_at';
-    const DELETED_AT_COLUMN = 'deleted_at';
+    const INVOICE_PATH_COLUMN = 'invoice_path';
 
     const OPEN_STATUS = 'open';
     const FULFILLED_STATUS = 'fulfilled';
@@ -36,28 +29,15 @@ class Order extends Model
         'item_details' => 'array',
     ];
 
-    /** @var User */
-    private $user;
-
     /** @var Collection|PaymentDetails[] */
     private $paymentsDetails;
 
     /** @var Cart */
     private $cart;
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     public function getNumber(): string
     {
         return $this->number;
-    }
-
-    public function getUserId(): int
-    {
-        return $this->user_id;
     }
 
     public function getCartId(): int
@@ -65,51 +45,9 @@ class Order extends Model
         return $this->cart_id;
     }
 
-    public function getStatus(): string
+    public function getInvoicePath(): ?string
     {
-        return $this->status;
-    }
-
-    public function getItem(): string
-    {
-        return $this->item;
-    }
-
-    public function getItemDetails(): array
-    {
-        return $this->item_details;
-    }
-
-    public function getTotal(): float
-    {
-        return $this->total;
-    }
-
-    public function getCreatedAt(): \DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function getUpdatedAt(): \DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function getDeletedAt(): ?\DateTimeInterface
-    {
-        return $this->deleted_at;
-    }
-
-    public function haveASubscriptionItem(): bool
-    {
-        $subscriptions = Subscription::ALLOWED_SUBSCRIPTIONS;
-
-        return in_array($this->item, $subscriptions);
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
+        return $this->invoice_path;
     }
 
     public function getPaymentsDetails(): Collection|array
@@ -138,9 +76,61 @@ class Order extends Model
         return $this->paymentsDetails->contains(fn($payment) => $payment->isPaid());
     }
 
-    public function setUser(User $user): void
+    public function getInvoiceItems(): array
     {
-        $this->user = $user;
+        $items = [];
+
+        if ($this->getTip() > 0) {
+            $items[] = [
+                'thumbnail' => '/build/images/tips.jpg',
+                'title'     => self::TIP_TITLE['fr'],
+                'price'     => number_format($this->getTip(), 2),
+            ];
+        }
+
+        $formatedPrice = number_format($this->price, 2);
+
+        if ($this->isSubscriptionArchiveItem()) {
+            $items[] = [
+                'thumbnail' => '/build/images/sub-yearly-archive.jpg',
+                'title'     => self::YEARLY_SUBSCRIPTION_ARCHIVE_TITLE['fr'],
+                'price'     => $formatedPrice,
+            ];
+
+            $items = array_reverse($items);
+
+            return $items;
+        }
+
+        $details = $this->getItemDetails();
+
+        if ($this->isMagazineItem()) {
+            $magazineNumberText = self::MAGAZINE_NUMBER_TITLE['fr'] . ' ' . $details['number'];
+            $items[] = [
+                'thumbnail' => $details['thumbnail'] ?? null,
+                'title'     => $magazineNumberText,
+                'price'     => $formatedPrice,
+            ];
+
+            $items = array_reverse($items);
+
+            return $items;
+        }
+
+        $items[] = [
+            'thumbnail' => '/build/images/sub-yearly.jpg',
+            'title'     => self::YEARLY_SUBSCRIPTION_TITLE['fr'],
+            'price'     => $formatedPrice,
+        ];
+
+        $items = array_reverse($items);
+
+        return $items;
+    }
+
+    public function setInvoicePath(?string $invoicePath): void
+    {
+        $this->invoice_path = $invoicePath;
     }
 
     /**

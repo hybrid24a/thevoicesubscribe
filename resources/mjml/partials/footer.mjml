@@ -1,6 +1,10 @@
-<mj-section background-color="#ffffff" text-align="left" padding-top="7px">
+<mj-section background-color="#ffffff" text-align="center" padding-top="7px">
   <mj-column>
-    <mj-text color="#333333" padding-bottom="5px">Bien cordialement,</mj-text>
-    <mj-text color="#333333" padding-top="0px">{{ $brandName }}</mj-text>
+    <mj-text color="#333333" padding-bottom="5px">
+        <div dir="rtl" style="direction:rtl; text-align:center;">شكرًا لاشتراككم.</div>
+    </mj-text>
+    <mj-text color="#333333" padding-top="0px">
+        <div dir="rtl" style="direction:rtl; text-align:center;">{{ $brandName }}</div>
+    </mj-text>
   </mj-column>
 </mj-section>

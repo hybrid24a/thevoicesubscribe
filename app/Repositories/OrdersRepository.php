@@ -34,6 +34,31 @@ class OrdersRepository
             ->first();
     }
 
+    /**
+     * @return Collection|Order[]
+     */
+    public function getByUserId(int $userId)
+    {
+        return Order::query()
+            ->select(Order::ID_COLUMN)
+            ->where(Order::USER_ID_COLUMN, $userId)
+            ->orderByDesc(Order::CREATED_AT_COLUMN)
+            ->get();
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getFulfilledByUserId(int $userId)
+    {
+        return Order::query()
+            ->select(Order::ID_COLUMN)
+            ->where(Order::USER_ID_COLUMN, $userId)
+            ->where(Order::STATUS_COLUMN, Order::FULFILLED_STATUS)
+            ->orderByDesc(Order::CREATED_AT_COLUMN)
+            ->get();
+    }
+
     public function create(array $data): Order
     {
         return Order::query()
@@ -44,7 +69,9 @@ class OrdersRepository
                 Order::ITEM_COLUMN          => $data[Order::ITEM_COLUMN],
                 Order::ITEM_DETAILS_COLUMN  => $data[Order::ITEM_DETAILS_COLUMN],
                 Order::STATUS_COLUMN        => $data[Order::STATUS_COLUMN],
-                Order::TOTAL_COLUMN         => $data[Order::TOTAL_COLUMN],
+                Order::PRICE_COLUMN         => $data[Order::PRICE_COLUMN],
+                Order::TIP_COLUMN           => $data[Order::TIP_COLUMN],
+                Order::INVOICE_PATH_COLUMN  => null,
             ]);
     }
 
@@ -53,7 +80,7 @@ class OrdersRepository
         $data = Arr::only($data, [
             Order::USER_ID_COLUMN,
             Order::STATUS_COLUMN,
-            Order::TOTAL_COLUMN,
+            Order::INVOICE_PATH_COLUMN,
         ]);
 
         return 1 === Order::query()

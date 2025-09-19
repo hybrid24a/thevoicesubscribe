@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Repositories\UsersRepository;
 use App\Transformers\UsersTransformer;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class UsersService
 {
@@ -39,12 +41,12 @@ class UsersService
         $this->usersEntitlementsService = $usersEntitlementsService;
     }
 
-    public function getById(int $id): ?User
+    public function getById(int $id, bool $hydrateOrders = true): ?User
     {
         $user = $this->usersRepository->getById($id);
 
         if ($user instanceof User) {
-            $user = $this->hydrate($user);
+            $user = $this->hydrate($user, $hydrateOrders);
         }
 
         return $user;
@@ -81,21 +83,23 @@ class UsersService
         return $this->usersRepository->update($user->getId(), $data);
     }
 
-    public function updateWpSession(User $user, string $sessionId)
+    public function updateWpSession(User $user, string $sessionId, Collection $orders)
     {
-        $userData = $this->usersTransformer->transform($user);
+        $userData = $this->usersTransformer->transform($user, $orders);
 
-        $res = Http::withHeaders([
+        Http::withHeaders([
             'Cookie' => 'thevoice_sess=' . $sessionId,
             'Accept' => 'application/json',
         ])->post(config('app.site_url') . '/wp-json/thevoice/v1/session/refresh', $userData);
     }
 
-    public function hydrate(User $user): User
+    private function hydrate(User $user): User
     {
         $subscription = $this->subscriptionsService->getActiveByUserId($user->getId());
-
         $user->setActiveSubscription($subscription);
+
+        $subscriptions = $this->subscriptionsService->getAllByUserId($user->getId());
+        $user->setSubscriptions($subscriptions);
 
         $entitlements = $this->usersEntitlementsService->getByUserId($user->getId());
         $user->setEntitlements($entitlements);

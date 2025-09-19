@@ -91,9 +91,7 @@ class CMIController extends Controller
         //     echo "FAILURE";
         // }
 
-        Log::info('CMI Callback Data');
         $order = $this->ordersService->getByNumber($orderNumber);
-        $this->ordersService->markPaymentAsPaid($order);
         $this->ordersService->fulfillOrder($order);
     }
 

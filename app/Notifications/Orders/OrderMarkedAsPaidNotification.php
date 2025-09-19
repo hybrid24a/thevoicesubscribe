@@ -36,8 +36,11 @@ class OrderMarkedAsPaidNotification extends Notification
     public function toMail($notifiable)
     {
         $makeOrderEmail = new OrderMarkedAsPaidEmail($notifiable->getName(), $this->order);
+        $invoicePath = $this->order->getInvoicePath();
+        $invoicePath = storage_path('app/public/' . $invoicePath);
 
         return $makeOrderEmail->subject('Nous avons reçu votre paiement')
-            ->to($notifiable->email);
+            ->to($notifiable->email)
+            ->attach($invoicePath);
     }
 }

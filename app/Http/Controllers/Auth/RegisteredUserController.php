@@ -35,9 +35,6 @@ class RegisteredUserController extends Controller
 
         $token = $user->createToken('wp-backend')->plainTextToken;
 
-
-        $token = $user->createToken('wp-backend')->plainTextToken;
-
         $data = $this->usersTransformer->transform($user);
         $data['token'] = $token;
 

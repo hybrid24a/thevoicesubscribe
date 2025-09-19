@@ -16,10 +16,11 @@ return new class extends Migration
             $table->integer('user_id')->nullable();
             $table->string('session_id');
             $table->string('external_id');
-            $table->string('item');
-            $table->integer('tip')->default(0);
             $table->string('status');
+            $table->string('item');
             $table->json('item_details');
+            $table->double('price');
+            $table->double('tip');
             $table->timestamps();
             $table->softDeletes();
         });

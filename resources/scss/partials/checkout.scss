@@ -69,6 +69,13 @@
         border-color: #e74c3c;
       }
     }
+
+    &.force-ltr {
+      input[type=text] {
+        direction: ltr;
+        text-align: left;
+      }
+    }
   }
 
   .inputs-group-2-col {
@@ -144,6 +151,11 @@
   }
 }
 
+input::placeholder {
+  direction: rtl;
+  text-align: right;
+}
+
 .cart-summary-wrapper {
   padding: 20px;
   border: solid 1px #e1e1e1;
@@ -166,9 +178,10 @@
   }
 
   .item-total {
-    width: 150px;
+    width: 80px;
     text-align: right;
     direction: ltr;
+    font-family: Arial, Helvetica, sans-serif;
   }
 
   .item-media {
@@ -214,6 +227,7 @@
   .shipping-total {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     .total-value {
       direction: ltr;
@@ -225,13 +239,10 @@
   }
 
   .cart-total {
-    margin: 15px 0 0;
-    padding: 15px 0 0;
-    border-top: solid 1px #cccccc;
-
     .total-value {
       font-weight: bold;
       font-size: 18px;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     .total-taxes {

@@ -3,7 +3,7 @@
 ])
 
 @section('content')
-<form id="make_order_form" action="/" method="POST">
+<form id="make-order-form" action="/" method="POST">
   @csrf
   <div class="payment-section">
     <div>
@@ -122,7 +122,7 @@
       </div>
     </div>
     <div class="actions">
-      <button class="button">تأكيد الدفع</button>
+      <button type="submit" class="button" id="validate-payment">تأكيد الدفع</button>
       <a href="{{ config('app.site_url') }}">العودة إلى الصفحة الرئيسية</a>
     </div>
   </div>
@@ -134,24 +134,42 @@ document.addEventListener('DOMContentLoaded', function() {
   const companyRadio = document.getElementById('company-type');
   const iceField = document.getElementById('ice_field');
   const nameField = document.getElementById('name_field');
-  const nameInput = nameField.querySelector('input[name="name"]');
 
-  function toggleFields() {
-    if (individualRadio.checked) {
-      iceField.style.display = 'none';
-      nameInput.placeholder = nameInput.getAttribute('data-individual-label');
-    } else {
-      console.log('Company selected');
-      iceField.style.display = 'block';
-      nameInput.placeholder = nameInput.getAttribute('data-company-label');
+  if (nameField) {
+    const nameInput = nameField.querySelector('input[name="name"]');
+
+    function toggleFields() {
+      if (individualRadio.checked) {
+        iceField.style.display = 'none';
+        nameInput.placeholder = nameInput.getAttribute('data-individual-label');
+      } else {
+        console.log('Company selected');
+        iceField.style.display = 'block';
+        nameInput.placeholder = nameInput.getAttribute('data-company-label');
+      }
     }
+
+    individualRadio.addEventListener('change', toggleFields);
+    companyRadio.addEventListener('change', toggleFields);
+
+    // Initial state
+    toggleFields();
   }
 
-  individualRadio.addEventListener('change', toggleFields);
-  companyRadio.addEventListener('change', toggleFields);
+  const form = document.getElementById('make-order-form');
+  const validateButton = document.getElementById('validate-payment');
+  let submitting = false;
 
-  // Initial state
-  toggleFields();
+  form.addEventListener('submit', function (e) {
+    if (submitting) {
+      e.preventDefault();
+      return false;
+    }
+    submitting = true;
+    validateButton.disabled = true;
+    validateButton.setAttribute('aria-busy', 'true');
+    validateButton.textContent = 'جارٍ المعالجة…';
+  });
 });
 </script>
 @endsection

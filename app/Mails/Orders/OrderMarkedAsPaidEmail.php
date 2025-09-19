@@ -3,7 +3,6 @@
 namespace App\Mails\Orders;
 
 use App\Models\Order;
-use App\Services\SettingsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -16,10 +15,16 @@ class OrderMarkedAsPaidEmail extends Mailable
     private $brandName;
 
     /** @var string */
+    private $brandLogo;
+
+    /** @var string */
     private $userName;
 
     /** @var Order  */
     private $order;
+
+    /** @var array */
+    private $actionButtonUrl;
 
     /**
      * Create a new message instance.
@@ -31,6 +36,8 @@ class OrderMarkedAsPaidEmail extends Mailable
         Order $order
     ) {
         $this->brandName = 'thevoice.ma';
+        $this->brandLogo = asset('/build/images/the-voice-logo.png');
+        $this->actionButtonUrl = config('app.site_url') . '/magazine';
         $this->userName = $userName;
         $this->order = $order;
     }
@@ -46,9 +53,11 @@ class OrderMarkedAsPaidEmail extends Mailable
 
         return $this->view('emails.orders.paid', [
             'brandName'      => $this->brandName,
+            'brandLogo'      => $this->brandLogo,
             'userName'       => $this->userName,
             'order'          => $this->order,
             'paymentDetails' => $paymentDetails,
+            'actionButtonUrl'=> $this->actionButtonUrl,
         ]);
     }
 }

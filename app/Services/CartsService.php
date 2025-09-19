@@ -48,7 +48,10 @@ class CartsService
 
     public function create(array $data): Cart
     {
-        return $this->cartsRepository->create($data);
+        $cart = $this->cartsRepository->create($data);
+        $cart = $this->hydrate($cart);
+
+        return $cart;
     }
 
     public function update(Cart $cart, array $data): bool
@@ -72,18 +75,7 @@ class CartsService
     private function hydrate(Cart $cart): Cart
     {
         $cart = $this->hydrateUser($cart);
-
-        $item = $cart->getItem();
-
-        if (isset(Cart::AVAILABLE_ITEMS[$item])) {
-            $price = Cart::AVAILABLE_ITEMS[$item]['price'];
-        } elseif (isset(Subscription::AVAILABLE_PLANS[$item])) {
-            $price = Subscription::AVAILABLE_PLANS[$item]['price'];
-        } else {
-            $price = 0;
-        }
-
-        $cart->setTotal($price);
+        $cart = $this->hydrateTotal($cart);
 
         return $cart;
     }
@@ -96,6 +88,15 @@ class CartsService
 
         $user = $this->usersService->getById($cart->getUserId());
         $cart->setUser($user);
+
+        return $cart;
+    }
+
+    private function hydrateTotal(Cart $cart): Cart
+    {
+        $cart->setTotal($cart->getPrice() + $cart->getTip());
+        $total = $cart->getPrice() + $cart->getTip();
+        $cart->setTotal($total);
 
         return $cart;
     }

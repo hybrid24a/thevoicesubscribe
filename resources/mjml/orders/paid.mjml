@@ -1,15 +1,77 @@
 <mjml>
   <mj-body background-color="#F4F4F4">
     <mj-include path="../partials/brand-header.mjml"></mj-include>
-    <mj-include path="../partials/greetings.mjml"></mj-include>
+    <mj-section background-color="#ffffff" padding-top="0" padding-bottom="0">
+        <mj-column>
+            <mj-text color="#333333" line-height="130%">
+                <div dir="rtl" style="direction:rtl; text-align:center;">
+                    <mj-text>مرحباً{{ isset($userName) ? ' ' . $userName : '' }}،</mj-text>
+                </div>
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding-top="0" padding-bottom="0">
+        <mj-column>
+            <mj-text color="#333333" line-height="130%">
+                <div dir="rtl" style="direction:rtl; text-align:center;">
+                    تم استلام طلبك وتأكيد الدفع بنجاح.
+                </div>
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding-top="0" padding-bottom="0">
+        <mj-column>
+            <mj-text color="#333333" line-height="130%">
+                <div dir="rtl" style="direction:rtl; text-align:center;">
+                    يمكنك تصفّح مجلاتك الآن.
+                </div>
+            </mj-text>
+        </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding-top="0" padding-bottom="0">
+        <mj-column width="100%" vertical-align="middle">
+            <mj-table
+                align="center"
+                cellpadding="8"
+                width="320px">
+                <tr>
+                    <td style="border:1px solid #333333; text-align:center;">{{ $order->getNumber() }}</td>
+                    <td style="border:1px solid #333333; text-align:center;">
+                        <div dir="rtl" style="direction:rtl; text-align:right;">رقم الطلب</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid #333333; text-align:center;">{{ $order->getFormattedUpdatedAt() }}</td>
+                    <td style="border:1px solid #333333; text-align:center;">
+                        <div dir="rtl" style="direction:rtl; text-align:right;">تاريخ الطلب</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid #333333; text-align:center;">{{ $order->getTotal() }} dh</td>
+                    <td style="border:1px solid #333333; text-align:center;">
+                        <div dir="rtl" style="direction:rtl; text-align:right;">المبلغ المدفوع</div>
+                    </td>
+                </tr>
+            </mj-table>
+        </mj-column>
+    </mj-section>
     <mj-section
-      background-color="#ffffff"
-      text-align="left"
-      padding-top="0"
-      padding-bottom="0">
-      <mj-column>
-        <mj-text color="#333333" line-height="130%">Nous avons bien reçu votre paiement, votre commande sera traitée dès que possible.</mj-text>
-      </mj-column>
+        background-color="#ffffff"
+        text-align="center"
+        padding-top="8px"
+        padding-bottom="16px">
+        <mj-column>
+            <mj-button
+                href="{{ $actionButtonUrl }}"
+                align="center"
+                background-color="#27eb02"
+                color="#000000"
+                font-size="14px"
+                font-weight="600"
+                inner-padding="12px 22px">
+                تصفّح المجلات
+            </mj-button>
+        </mj-column>
     </mj-section>
     <mj-include path="../partials/footer.mjml"></mj-include>
   </mj-body>

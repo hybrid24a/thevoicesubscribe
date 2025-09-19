@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('status');
             $table->string('item');
             $table->json('item_details');
-            $table->double('total');
+            $table->double('price');
+            $table->double('tip');
+            $table->string('invoice_path')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
