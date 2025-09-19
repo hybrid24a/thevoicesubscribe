@@ -55,10 +55,13 @@ class UsersTransformer
         }
 
         $userData['user']['orders'] = $orders->map(function ($order) {
+            $baseUrl = env('APP_CHECKOUT_URL');
+            $invoicePath = rtrim($baseUrl, '/') . '/storage/' . ltrim($order->getInvoicePath(), '/');
+
             return [
                 'number'      => $order->getNumber(),
                 'total'       => $order->getTotal(),
-                'invoicePath' => rtrim(env('APP_CHECKOUT_URL'), '/') . '/' . ltrim($order->getInvoicePath(), '/'),
+                'invoicePath' => $invoicePath,
                 'item'        => $order->getItem(),
                 'itemDetails' => $order->getItemDetails(),
                 'createdAt'   => $order->getCreatedAt()->format('Y-m-d H:i'),
