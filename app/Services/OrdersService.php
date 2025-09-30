@@ -36,6 +36,9 @@ class OrdersService
     /** @var InvoicesService */
     private $invoicesService;
 
+    /** @var ReservedInvoicesService */
+    private $reservedInvoicesService;
+
     public function __construct(
         OrdersRepository $ordersRepository,
         UsersService $usersService,
@@ -43,7 +46,8 @@ class OrdersService
         SubscriptionsService $subscriptionsService,
         CartsService $cartsService,
         UsersEntitlementsService $usersEntitlementsService,
-        InvoicesService $invoicesService
+        InvoicesService $invoicesService,
+        ReservedInvoicesService $reservedInvoicesService
     ) {
         $this->ordersRepository = $ordersRepository;
         $this->usersService = $usersService;
@@ -52,6 +56,7 @@ class OrdersService
         $this->cartsService = $cartsService;
         $this->usersEntitlementsService = $usersEntitlementsService;
         $this->invoicesService = $invoicesService;
+        $this->reservedInvoicesService = $reservedInvoicesService;
     }
 
     public function getById(int $id, bool $hydrateUser = true): ?Order
@@ -113,6 +118,17 @@ class OrdersService
         }
 
         return $orders;
+    }
+
+    public function getCurrentYearLastInvoicedOrder(): ?Order
+    {
+        $order = $this->ordersRepository->getLastInvoicedOrderByYear(date('Y'));
+
+        if ($order instanceof Order) {
+            $order = $this->getById($order->getId());
+        }
+
+        return $order;
     }
 
     public function create(array $data): Order
@@ -180,10 +196,14 @@ class OrdersService
         $this->markAsFulfilled($order);
         $user = $this->usersService->getById($order->getUserId());
 
+        $invoiceNumber = $this->previouslyUsedInvoiceNumber() + 1;
+        $order->setInvoiceNumber($invoiceNumber);
+
         $invoicePath = $this->invoicesService->generateInvoice($order);
 
         $this->update($order, [
-            Order::INVOICE_PATH_COLUMN => $invoicePath,
+            Order::INVOICE_PATH_COLUMN   => $invoicePath,
+            Order::INVOICE_NUMBER_COLUMN => $invoiceNumber,
         ]);
 
         $order->setInvoicePath($invoicePath);
@@ -200,6 +220,26 @@ class OrdersService
         return $this->paymentDetailsService->update($order->getLastPaymentDetails(), [
             PaymentDetails::PAYLOAD_COLUMN => $payload,
         ]);
+    }
+
+    public function previouslyUsedInvoiceNumber(): int
+    {
+        $lastOrder = $this->getCurrentYearLastInvoicedOrder();
+        $lastInvoiceNumber = $lastOrder ? $lastOrder->getInvoiceNumber() : 0;
+        $reservedInvoices = $this->reservedInvoicesService->getAll();
+        $currentYearReservedInvoices = $reservedInvoices->filter(function ($invoice) {
+            return $invoice->getYear() === (int) date('Y');
+        });
+
+        if ($currentYearReservedInvoices->isNotEmpty()) {
+            $lastReservedInvoiceNumber = $currentYearReservedInvoices->first()->getNumber();
+
+            if ($lastReservedInvoiceNumber > $lastInvoiceNumber) {
+                $lastInvoiceNumber = $lastReservedInvoiceNumber;
+            }
+        }
+
+        return $lastInvoiceNumber;
     }
 
     private function hydrate(Order $order, bool $hydrateUser): Order

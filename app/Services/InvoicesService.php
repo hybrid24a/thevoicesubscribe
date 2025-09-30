@@ -11,38 +11,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoicesService
 {
-    /** @var OrdersRepository */
-    private $ordersRepository;
-
-    /** @var UsersService */
-    private $usersService;
-
-    /** @var PaymentDetailsService */
-    private $paymentDetailsService;
-
-    /** @var SubscriptionsService */
-    private $subscriptionsService;
-
-    /** @var CartsService */
-    private $cartsService;
-
-    /** @var UsersEntitlementsService */
-    private $usersEntitlementsService;
-
     public function __construct(
-        OrdersRepository $ordersRepository,
-        UsersService $usersService,
-        PaymentDetailsService $paymentDetailsService,
-        SubscriptionsService $subscriptionsService,
-        CartsService $cartsService,
-        UsersEntitlementsService $usersEntitlementsService
     ) {
-        $this->ordersRepository = $ordersRepository;
-        $this->usersService = $usersService;
-        $this->paymentDetailsService = $paymentDetailsService;
-        $this->subscriptionsService = $subscriptionsService;
-        $this->cartsService = $cartsService;
-        $this->usersEntitlementsService = $usersEntitlementsService;
     }
 
     public function generateInvoice(Order $order): string

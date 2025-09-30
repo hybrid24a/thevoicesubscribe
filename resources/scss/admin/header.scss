@@ -1,0 +1,94 @@
+.main-header {
+  &,
+  a {
+    color: #ffffff;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .main-menu {
+    li {
+      a {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        padding: 0 15px;
+        gap: 10px;
+        font-weight: bold;
+      }
+
+      .icon {
+        width: 20px;
+      }
+
+      &:last-child {
+        margin: 0;
+      }
+
+      &:hover,
+      &.active {
+        a {
+          background-color: #ffffff22;
+        }
+      }
+    }
+  }
+
+  .client-logo {
+    max-width: 160px;
+    height: auto;
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+  }
+
+  .brand-logo {
+    padding: 28px 0;
+    border-bottom: solid 1px #ffffff55;
+
+    a {
+      display: block;
+      margin: 0 auto;
+      width: 150px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  .mobile-bar {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+  }
+
+  .side-menu {
+    background: #000000;
+    color: #ffffff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+  }
+
+  @media (min-width: '992px') {
+    .client-logo {
+      max-width: 180px;
+    }
+  }
+}

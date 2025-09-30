@@ -56,6 +56,8 @@ return [
 
     'checkout_url' => env('APP_CHECKOUT_URL', 'http://checkout.localhost'),
 
+    'admin_url' => env('APP_ADMIN_URL', 'http://admin.localhost'),
+
     'site_url' => env('APP_SITE_URL', 'http://localhost'),
 
     /*

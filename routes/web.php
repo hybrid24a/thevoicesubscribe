@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\ParamsController;
 use App\Http\Controllers\Checkout\CheckoutController;
 use App\Http\Controllers\Checkout\CMIController;
 use App\Http\Middleware\ExceptWpCookies;
@@ -28,5 +30,22 @@ Route::domain($checkoutDomain)
             Route::post('/', [CMIController::class, 'paymentCallback'])->name('callback');
             Route::post('/ok/{number}', [CMIController::class, 'ok'])->name('ok');
             Route::post('/fail', [CMIController::class, 'fail'])->name('fail');
+        });
+    });
+
+$adminDomain = parse_url(config('app.admin_url'), PHP_URL_HOST);
+
+Route::domain($adminDomain)
+    ->group(function () {
+        Route::middleware('guest.admin')->group(function () {
+            Route::get('/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
+            Route::post('/login', [LoginController::class, 'login']);
+        });
+        Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
+
+        // Protected Admin Routes
+        Route::middleware('auth.admin')->group(function () {
+            Route::get('/params', [ParamsController::class, 'index'])->name('params');
+            Route::post('/params', [ParamsController::class, 'store']);
         });
     });

@@ -1,5 +1,6 @@
 @extends('html', [
   'title' => $title,
+  'bodyClass' => 'rtl',
 ])
 
 @section('app')

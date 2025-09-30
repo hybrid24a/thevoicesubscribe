@@ -1,9 +1,10 @@
 @use 'normalize.css/normalize';
 @use 'partials/variables' as *;
-@use 'partials/global';
-@use 'checkout/form';
-@use 'checkout/layout';
-@use 'checkout/checkout';
+@use 'admin/global';
+@use 'admin/form';
+@use 'admin/layout';
+@use 'admin/header';
+@use 'admin/auth';
 
 @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&display=swap');
 

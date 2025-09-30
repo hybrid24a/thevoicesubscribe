@@ -211,7 +211,7 @@
   </div>
   <div class="invoice-number">
     <span class="name">Facture N° :</span>
-    <span class="number">3240234023</span>
+    <span class="number">{{ $order->getInvoiceDisplayNumber()}}</span>
   </div>
   <div class="client-infos">
     <div class="client-info">
@@ -273,7 +273,7 @@
   </div>
   <div class="footer">
     <div class="line">Société NEWMEDIA PRODUCTION  SARL - RC: 156713. Patente 25108229. IF: 51640534. CNSS: 4104611.</div>
-    <div class="line">ICE: 002973947000031. Banque Populaire Agence ALLAL BEN ABDALLAH. RIB: 022 810 0000500030351081 23</div>
+    <div class="line">ICE: 002973947000031. Saham Banque ; Agence Rabat Moulay Youssef. RIB: 022 810 0000500030351081 23</div>
     <div class="line">Capital social: 100000 MAD. N°6, 3ème étage 3, Rue Al Yanboua Hassan - Rabat. Tél: 0808621936. Email: contact@thevoice.ma</div>
   </div>
 </body>

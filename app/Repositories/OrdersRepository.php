@@ -59,6 +59,15 @@ class OrdersRepository
             ->get();
     }
 
+    public function getLastInvoicedOrderByYear(int $year): ?Order
+    {
+        return Order::query()
+            ->whereNotNull(Order::INVOICE_NUMBER_COLUMN)
+            ->whereYear(Order::CREATED_AT_COLUMN, $year)
+            ->orderByDesc(Order::INVOICE_NUMBER_COLUMN)
+            ->first();
+    }
+
     public function create(array $data): Order
     {
         return Order::query()
@@ -72,6 +81,7 @@ class OrdersRepository
                 Order::PRICE_COLUMN         => $data[Order::PRICE_COLUMN],
                 Order::TIP_COLUMN           => $data[Order::TIP_COLUMN],
                 Order::INVOICE_PATH_COLUMN  => null,
+                Order::INVOICE_NUMBER_COLUMN=> null,
             ]);
     }
 
@@ -81,6 +91,7 @@ class OrdersRepository
             Order::USER_ID_COLUMN,
             Order::STATUS_COLUMN,
             Order::INVOICE_PATH_COLUMN,
+            Order::INVOICE_NUMBER_COLUMN,
         ]);
 
         return 1 === Order::query()

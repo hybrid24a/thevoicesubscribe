@@ -1,4 +1,4 @@
-@use './variables' as *;
+@use '../partials/variables' as *;
 
 .button {
   cursor: pointer;
@@ -49,6 +49,7 @@
 input[type="text"],
 input[type="password"],
 input[type="number"],
+input[type="email"],
 select {
   width: 100%;
   padding: 0 10px;

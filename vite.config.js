@@ -29,6 +29,7 @@ export default defineConfig({
     laravel({
       input: [
         'resources/scss/checkout.scss',
+        'resources/scss/admin.scss',
       ],
       refresh: true,
     })

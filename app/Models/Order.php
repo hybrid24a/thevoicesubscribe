@@ -16,6 +16,7 @@ class Order extends Model
     const NUMBER_COLUMN = 'number';
     const CART_ID_COLUMN = 'cart_id';
     const INVOICE_PATH_COLUMN = 'invoice_path';
+    const INVOICE_NUMBER_COLUMN = 'invoice_number';
 
     const OPEN_STATUS = 'open';
     const FULFILLED_STATUS = 'fulfilled';
@@ -128,9 +129,28 @@ class Order extends Model
         return $items;
     }
 
-    public function setInvoicePath(?string $invoicePath): void
+    public function getInvoiceNumber(): ?int
+    {
+        return $this->invoice_number;
+    }
+
+    public function getInvoiceDisplayNumber(): ?string
+    {
+        if (!$this->invoice_number) {
+            return null;
+        }
+
+        return date('Y') . '/' . str_pad($this->invoice_number, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function setInvoicePath(string $invoicePath): void
     {
         $this->invoice_path = $invoicePath;
+    }
+
+    public function setInvoiceNumber(int $invoiceNumber): void
+    {
+        $this->invoice_number = $invoiceNumber;
     }
 
     /**

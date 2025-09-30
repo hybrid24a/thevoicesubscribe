@@ -22,6 +22,7 @@ return new class extends Migration
             $table->double('price');
             $table->double('tip');
             $table->string('invoice_path')->nullable();
+            $table->integer('invoice_number')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

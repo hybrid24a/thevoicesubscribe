@@ -1,0 +1,100 @@
+@use '../partials/global';
+
+.page-header {
+  padding: 5px 0;
+  display: grid;
+  gap: 20px;
+  background-color: #ffffff;
+  border-bottom: solid 1px #d1d3dd;
+
+  a {
+    color: #333333;
+  }
+
+  .page-header-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+  }
+
+  .user-box {
+    .menu-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      font-weight: bold;
+      text-decoration: none;
+
+      .text {
+        white-space: nowrap;
+      }
+
+      .icon {
+        margin: 0 0 0 10px;
+        line-height: 1;
+      }
+
+      &.active,
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .title h1 {
+    font-size: 18px;
+    margin: 0;
+    line-height: 1;
+  }
+
+}
+
+.page-content {
+  padding: 25px 0;
+}
+
+.row {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+
+  &.stretch {
+    align-items: stretch;
+  }
+}
+
+.row-2-columns {
+  grid-template-columns: 1fr 1fr;
+}
+
+.row-3-2 {
+  grid-template-columns: 3fr 2fr;
+}
+
+.row-2-3 {
+  grid-template-columns: 2fr 3fr;
+}
+
+.row-3-columns {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.row-4-columns {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.row-5-columns {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.row-6-columns {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.col {
+  display: grid;
+  gap: 20px;
+}
