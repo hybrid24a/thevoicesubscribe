@@ -166,10 +166,19 @@ class OrdersService
         return $this->ordersRepository->update($order->getId(), $data);
     }
 
-    public function markPaymentAsPaid(Order $order)
+    public function markPaymentAsPaid(Order $order, array $payload)
     {
         return $this->paymentDetailsService->update($order->getLastPaymentDetails(), [
-            PaymentDetails::STATUS_COLUMN => PaymentDetails::PAID_STATUS,
+            PaymentDetails::STATUS_COLUMN  => PaymentDetails::PAID_STATUS,
+            PaymentDetails::PAYLOAD_COLUMN => $payload,
+        ]);
+    }
+
+    public function markPaymentAsCanceled(Order $order, array $payload)
+    {
+        return $this->paymentDetailsService->update($order->getLastPaymentDetails(), [
+            PaymentDetails::STATUS_COLUMN  => PaymentDetails::CANCELED_STATUS,
+            PaymentDetails::PAYLOAD_COLUMN => $payload,
         ]);
     }
 
@@ -180,22 +189,15 @@ class OrdersService
         ]);
     }
 
-    public function fulfillOrder(Order $order)
+    public function markAsCanceled(Order $order): bool
     {
-        $this->markPaymentAsPaid($order);
+        return $this->update($order, [
+            Order::STATUS_COLUMN => Order::CANCELED_STATUS,
+        ]);
+    }
 
-        if ($order->haveASubscriptionItem()) {
-            $this->subscriptionsService->subscribe($order->getUserId(), $order->getItem());
-        }
-
-        $itemDetails = $order->getItemDetails();
-        if (isset($itemDetails['id'])) {
-            $this->usersEntitlementsService->grantEntitlement($order->getUserId(), $itemDetails);
-        }
-
-        $this->markAsFulfilled($order);
-        $user = $this->usersService->getById($order->getUserId());
-
+    private function generateInvoice(Order $order): Order
+    {
         $invoiceNumber = $this->previouslyUsedInvoiceNumber() + 1;
         $order->setInvoiceNumber($invoiceNumber);
 
@@ -208,11 +210,37 @@ class OrdersService
 
         $order->setInvoicePath($invoicePath);
 
-        $orders = $this->getFulfilledByUser($user);
+        return $order;
+    }
 
+    public function fulfillOrder(Order $order, array $payload = [])
+    {
+        $this->markPaymentAsPaid($order, $payload);
+
+        if ($order->haveASubscriptionItem()) {
+            $this->subscriptionsService->subscribe($order->getUserId(), $order->getItem());
+        }
+
+        $itemDetails = $order->getItemDetails();
+
+        if (isset($itemDetails['id'])) {
+            $this->usersEntitlementsService->grantEntitlement($order->getUserId(), $itemDetails);
+        }
+
+        $this->markAsFulfilled($order);
+        $order = $this->generateInvoice($order);
+
+        $user = $this->usersService->getById($order->getUserId());
+        $orders = $this->getFulfilledByUser($user);
         $this->usersService->updateWpSession($user, $order->getCart()->getSessionId(), $orders);
 
         event(new OrderMarkedAsPaid($order));
+    }
+
+    public function cancelOrder(Order $order, array $payload = [])
+    {
+        $this->markPaymentAsCanceled($order, $payload);
+        $this->markAsCanceled($order);
     }
 
     public function updatePayload(Order $order, array $payload): bool

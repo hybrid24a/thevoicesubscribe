@@ -26,6 +26,7 @@ class PaymentDetails extends Model
     const PENDING_STATUS = 'pending';
     const REFUNDED_STATUS = 'refunded';
     const VOIDED_STATUS = 'voided';
+    const CANCELED_STATUS = 'canceled';
 
     const CMI = 'cmi';
 

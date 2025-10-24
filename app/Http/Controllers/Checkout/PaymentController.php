@@ -120,81 +120,71 @@ class PaymentController extends Controller
         $orderNumber = $request->get('orderId');
         $order = $this->ordersService->getByNumber($orderNumber);
 
-        // $cmiParams = $request->all();
-        // $orderedCmiParams = $this->cmiService->orderParams($cmiParams);
+        if (false === $order instanceof Order) {
+            Log::error('Order not found in payment callback', ['order_number' => $orderNumber]);
 
-        // $actualHash = $this->cmiService->getCMIHash($orderedCmiParams);
-        // $retrievedHash = $cmiParams['HASH'];
+            $data = ['status' => 'KO', 'message' => 'Order not found'];
+            header('Content-Type: application/json');
+            echo json_encode($data);
 
+            return;
+        }
 
-        // if ($order instanceof Order) {
-        //     $this->ordersService->updatePayload($order, $cmiParams);
-        // }
-
-        // if($retrievedHash == $actualHash)	{
-        //     if($_POST["ProcReturnCode"] == "00")	{
-        //         echo "ACTION=POSTAUTH";
-
-        //         if ($order instanceof Order) {
-        //             $this->ordersService->markPaymentAsPaid($order);
-        //         }
-        //     } else {
-        //         echo "APPROVED";
-        //     }
-        // } else {
-        //     echo "FAILURE";
-        // }
-
-        // $order = $this->ordersService->getByNumber($orderNumber);
-        // $this->ordersService->fulfillOrder($order);
-
-        //Get the URL and credentials for your paywall
         $notificationKey = 'bAu0pSGHNZALR2AO';
 
         $input = file_get_contents('php://input');
-        $signature = hash_hmac('sha256',$input,$notificationKey);
+        $signature = hash_hmac('sha256', $input, $notificationKey);
         $headers = apache_request_headers();
+        $inputData = json_decode($input ,true);
 
-        Log::info('Headers received', $headers);
-        Log::info('Request body', ['body' => $input]);
-        Log::info('Verifying signature', ['calculated' => $signature, 'received' => $headers['X-Callback-Signature']]);
+        if (strcasecmp($signature, $headers['X-Callback-Signature']) != 0) {
+            $this->ordersService->cancelOrder($order, $inputData);
 
-        if (strcasecmp($signature, $headers['X-Callback-Signature']) == 0) {
-            $input_array = json_decode($input ,true);
+            $data = ['status' => 'KO', 'message' => 'Error signature'];
+            header('Content-Type: application/json');
+            echo json_encode($data);
+        }
 
-            if($input_array['status'] == 'CHARGED'){
-                $transaction_data = null;
-                foreach($input_array['transactions'] as $transaction){
-                    if($transaction['state'] == 'APPROVED'){
-                            $transaction_data = $transaction;
-                    }
+        if($inputData['status'] == 'CHARGED'){
+            $transactionData = null;
+
+            foreach($inputData['transactions'] as $transaction){
+                if($transaction['state'] == 'APPROVED'){
+                    $transactionData = $transaction;
                 }
+            }
 
-                if ($transaction_data['resultCode'] === 0) {
-                    //successful payment
-                    $data = ['status' => 'OK', 'message' => 'Status recorded successfully'];
-                    header('Content-Type: application/json');
-                    echo json_encode($data);
-                } else {
-                    $data = ['status' => 'KO', 'message' => 'Status not recorded successfully'];
-                    header('Content-Type: application/json');
-                    echo json_encode($data);
-                }
-            } elseif($input_array['status'] == 'DECLINED') {
-                $transaction_data = null;
+            if ($transactionData['resultCode'] === 0) {
+                $this->ordersService->fulfillOrder($order, $inputData);
 
-                foreach($input_array['transactions'] as $transaction){
-                    if($transaction['state'] == 'DECLINED'){
-                        $transaction_data = $transaction;
-                    }
-                }
-
-                $data = ['status' => 'KO', 'message' => 'Status not recorded successfully'];
+                $data = ['status' => 'OK', 'message' => 'Status recorded successfully'];
                 header('Content-Type: application/json');
                 echo json_encode($data);
+
+                return;
             }
-        } else {
-            $data = ['status' => 'KO', 'message' => 'Error signature'];
+
+            $this->ordersService->cancelOrder($order, $inputData);
+
+            $data = ['status' => 'KO', 'message' => 'Status not recorded successfully'];
+            header('Content-Type: application/json');
+            echo json_encode($data);
+
+            return;
+        }
+
+        if($inputData['status'] == 'DECLINED') {
+            $transactionData = null;
+
+            foreach($inputData['transactions'] as $transaction){
+                if($transaction['state'] == 'DECLINED'){
+                    $transactionData = $transaction;
+                }
+            }
+
+            $this->ordersService->cancelOrder($order, $inputData);
+
+            $data = ['status' => 'KO', 'message' => 'Status not recorded successfully'];
             header('Content-Type: application/json');
             echo json_encode($data);
         }

@@ -20,10 +20,12 @@ class Order extends Model
 
     const OPEN_STATUS = 'open';
     const FULFILLED_STATUS = 'fulfilled';
+    const CANCELED_STATUS = 'canceled';
 
     const STATUSES = [
         self::OPEN_STATUS,
         self::FULFILLED_STATUS,
+        self::CANCELED_STATUS,
     ];
 
     protected $casts = [
