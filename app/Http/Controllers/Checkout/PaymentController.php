@@ -115,16 +115,17 @@ class PaymentController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        Log::info('Payment Callback received', ['request' => $request->all()]);
+        Log::info('Payment Callback received', $request->all());
 
-        // $orderNumber = $request->get('oid');
+        $orderNumber = $request->get('orderId');
+        $order = $this->ordersService->getByNumber($orderNumber);
+
         // $cmiParams = $request->all();
         // $orderedCmiParams = $this->cmiService->orderParams($cmiParams);
 
         // $actualHash = $this->cmiService->getCMIHash($orderedCmiParams);
         // $retrievedHash = $cmiParams['HASH'];
 
-        // $order = $this->ordersService->getByNumber($orderNumber);
 
         // if ($order instanceof Order) {
         //     $this->ordersService->updatePayload($order, $cmiParams);
@@ -146,6 +147,57 @@ class PaymentController extends Controller
 
         // $order = $this->ordersService->getByNumber($orderNumber);
         // $this->ordersService->fulfillOrder($order);
+
+        //Get the URL and credentials for your paywall
+        $notificationKey = 'bAu0pSGHNZALR2AO';
+
+        $input = file_get_contents('php://input');
+        $signature = hash_hmac('sha256',$input,$notificationKey);
+        $headers = apache_request_headers();
+
+        Log::info('Headers received', $headers);
+        Log::info('Request body', ['body' => $input]);
+        Log::info('Verifying signature', ['calculated' => $signature, 'received' => $headers['X-Callback-Signature']]);
+
+        if (strcasecmp($signature, $headers['X-Callback-Signature']) == 0) {
+            $input_array = json_decode($input ,true);
+
+            if($input_array['status'] == 'CHARGED'){
+                $transaction_data = null;
+                foreach($input_array['transactions'] as $transaction){
+                    if($transaction['state'] == 'APPROVED'){
+                            $transaction_data = $transaction;
+                    }
+                }
+
+                if ($transaction_data['resultCode'] === 0) {
+                    //successful payment
+                    $data = ['status' => 'OK', 'message' => 'Status recorded successfully'];
+                    header('Content-Type: application/json');
+                    echo json_encode($data);
+                } else {
+                    $data = ['status' => 'KO', 'message' => 'Status not recorded successfully'];
+                    header('Content-Type: application/json');
+                    echo json_encode($data);
+                }
+            } elseif($input_array['status'] == 'DECLINED') {
+                $transaction_data = null;
+
+                foreach($input_array['transactions'] as $transaction){
+                    if($transaction['state'] == 'DECLINED'){
+                        $transaction_data = $transaction;
+                    }
+                }
+
+                $data = ['status' => 'KO', 'message' => 'Status not recorded successfully'];
+                header('Content-Type: application/json');
+                echo json_encode($data);
+            }
+        } else {
+            $data = ['status' => 'KO', 'message' => 'Error signature'];
+            header('Content-Type: application/json');
+            echo json_encode($data);
+        }
     }
 
     public function ok(Request $request, string $number)
