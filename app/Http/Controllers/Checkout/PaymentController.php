@@ -51,7 +51,6 @@ class PaymentController extends Controller
         }
 
         $cmiUrl = config('cmi.payment_url');
-        Log::info('Redirecting to CMI payment', ['order_number' => $order->getNumber()]);
 
         // $cmiParams = $this->cmiService->getCMIParams($lastPaymentDetails, $order->getUser(), $order->getNumber());
         // $hash = $this->cmiService->getCMIHash($cmiParams);
@@ -66,7 +65,6 @@ class PaymentController extends Controller
         $merchantAccount = 'Thevoice_TEST';
         $paywallSecretKey = '84ThzOEPuZEGebMB';
         $paywallUrl = 'https://payment-sandbox.payzone.ma/pwthree/launch';
-        $notificationKey = 'bAu0pSGHNZALR2AO';
 
         //Fill in the payload with parameters for the customer, charge and behavior you want
         $payload = [
@@ -115,9 +113,8 @@ class PaymentController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        Log::info('Payment Callback received', $request->all());
-
         $orderNumber = $request->get('orderId');
+        Log::info('Payment Callback received', ['order_number' => $orderNumber]);
         $order = $this->ordersService->getByNumber($orderNumber);
 
         if (false === $order instanceof Order) {
