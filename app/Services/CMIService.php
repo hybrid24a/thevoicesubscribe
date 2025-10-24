@@ -35,9 +35,9 @@ class CMIService
         $cmiParams = [
             'clientid'    => $clientid,
             'amount'      => $amount,
-            'okUrl'       => route('checkout.cmi.ok'),
-            'failUrl'     => route('checkout.cmi.fail'),
-            'callbackUrl' => route('checkout.cmi.callback'),
+            'okUrl'       => route('checkout.pay.ok'),
+            'failUrl'     => route('checkout.pay.fail'),
+            'callbackUrl' => route('checkout.pay.callback'),
             'shopurl'     => config('app.site_url'),
             'currency'    => '504',
             'BillToName'  => $user->getName(),

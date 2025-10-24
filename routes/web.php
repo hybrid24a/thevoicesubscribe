@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\ParamsController;
 use App\Http\Controllers\Checkout\CheckoutController;
-use App\Http\Controllers\Checkout\CMIController;
+use App\Http\Controllers\Checkout\PaymentController;
 use App\Http\Middleware\ExceptWpCookies;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -25,11 +25,11 @@ Route::domain($checkoutDomain)
         Route::fallback(fn() => abort(404));
 
 
-        Route::get('/checkout/cmi/{order}', [CMIController::class, 'preparePayment'])->name('cmi');
-        Route::prefix('/checkout/cmi')->name('cmi.')->withoutMiddleware([VerifyCsrfToken::class])->group(function () {
-            Route::post('/', [CMIController::class, 'paymentCallback'])->name('callback');
-            Route::post('/ok/{number}', [CMIController::class, 'ok'])->name('ok');
-            Route::post('/fail', [CMIController::class, 'fail'])->name('fail');
+        Route::get('/pay/{order}', [PaymentController::class, 'preparePayment'])->name('pay');
+        Route::prefix('/pay')->name('pay.')->withoutMiddleware([VerifyCsrfToken::class])->group(function () {
+            Route::get('/', [PaymentController::class, 'paymentCallback'])->name('callback');
+            Route::get('/ok/{number}', [PaymentController::class, 'ok'])->name('ok');
+            Route::get('/fail/{number}', [PaymentController::class, 'fail'])->name('fail');
         });
     });
 

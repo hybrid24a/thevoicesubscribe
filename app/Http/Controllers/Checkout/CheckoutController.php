@@ -202,15 +202,9 @@ class CheckoutController extends Controller
             $order = $this->ordersService->makeOrder($cart);
         }
 
-        // Http::post(route('checkout.cmi.callback'), [
-        //     'oid' => $order->getNumber(),
-        // ]);
-
-
-        $order = $this->ordersService->getByNumber($order->getNumber());
-        $this->ordersService->fulfillOrder($order);
-
-        return view('simulate-cmi', ['order' => $order]);
+        return redirect()->route('checkout.pay', [
+            'order' => $order->getNumber()
+        ]);
     }
 
     public function checkoutLogin()

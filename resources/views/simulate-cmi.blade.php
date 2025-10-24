@@ -34,7 +34,7 @@
 </head>
 <body>
   @php
-    $okRoute = route("checkout.cmi.ok", ['number' => $order->getNumber()]);
+    $okRoute = route("checkout.pay.ok", ['number' => $order->getNumber()]);
   @endphp
   <div class="message">Simulating CMI</div>
   <div class="countdown" id="countdown">3</div>
