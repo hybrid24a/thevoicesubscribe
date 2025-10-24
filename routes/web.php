@@ -27,7 +27,7 @@ Route::domain($checkoutDomain)
 
         Route::get('/pay/{order}', [PaymentController::class, 'preparePayment'])->name('pay');
         Route::prefix('/pay')->name('pay.')->withoutMiddleware([VerifyCsrfToken::class])->group(function () {
-            Route::get('/', [PaymentController::class, 'paymentCallback'])->name('callback');
+            Route::post('/', [PaymentController::class, 'paymentCallback'])->name('callback');
             Route::get('/ok/{number}', [PaymentController::class, 'ok'])->name('ok');
             Route::get('/fail/{number}', [PaymentController::class, 'fail'])->name('fail');
         });
