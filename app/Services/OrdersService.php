@@ -153,7 +153,7 @@ class OrdersService
         $this->paymentDetailsService->create($order, [
             PaymentDetails::AMOUNT_COLUMN         => $cart->getTotal(),
             PaymentDetails::STATUS_COLUMN         => PaymentDetails::PENDING_STATUS,
-            PaymentDetails::PAYMENT_METHOD_COLUMN => PaymentDetails::CMI,
+            PaymentDetails::PAYMENT_METHOD_COLUMN => PaymentDetails::PAYZONE,
         ]);
 
         $order = $this->getById($order->getId());

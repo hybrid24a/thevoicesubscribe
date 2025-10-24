@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\PaymentDetails;
-use App\Services\CMIService;
+use App\Services\PayzoneService;
 use App\Services\OrdersService;
 use App\Services\UsersService;
 
@@ -16,19 +16,19 @@ class PaymentController extends Controller
     /** @var OrdersService */
     private $ordersService;
 
-    /** @var CMIService */
-    private $cmiService;
+    /** @var PayzoneService */
+    private $payzoneService;
 
     /** @var UsersService */
     private $usersService;
 
     public function __construct(
         OrdersService $ordersService,
-        CMIService $cmiService,
+        PayzoneService $payzoneService,
         UsersService $usersService
     ) {
         $this->ordersService = $ordersService;
-        $this->cmiService = $cmiService;
+        $this->payzoneService = $payzoneService;
         $this->usersService = $usersService;
     }
 
@@ -46,69 +46,13 @@ class PaymentController extends Controller
             return redirect()->route('store.cart.show');
         }
 
-        if ($lastPaymentDetails->getPaymentMethod() !== 'cmi') {
+        if ($lastPaymentDetails->getPaymentMethod() !== PaymentDetails::PAYZONE) {
             return redirect()->route('store.cart.show');
         }
 
-        $cmiUrl = config('cmi.payment_url');
+        $payzoneData = $this->payzoneService->generateFormData($order);
 
-        // $cmiParams = $this->cmiService->getCMIParams($lastPaymentDetails, $order->getUser(), $order->getNumber());
-        // $hash = $this->cmiService->getCMIHash($cmiParams);
-
-        // return view('nulled.payments.cmi', [
-        //     'cmiUrl'    => $cmiUrl,
-        //     'cmiParams' => $cmiParams,
-        //     'hash'      => $hash
-        // ]);
-
-        //Get the URL and credentials for your paywall
-        $merchantAccount = 'Thevoice_TEST';
-        $paywallSecretKey = '84ThzOEPuZEGebMB';
-        $paywallUrl = 'https://payment-sandbox.payzone.ma/pwthree/launch';
-
-        //Fill in the payload with parameters for the customer, charge and behavior you want
-        $payload = [
-            // Authentication parameters
-            'merchantAccount'  => $merchantAccount,
-            'timestamp'        => time(),
-            'skin'             => 'vps-1-vue', // fixed value
-
-            // Customer parameters
-            'customerId'      =>  $order->getUserId(), // must be unique for each custumer
-            'customerCountry' => 'MA',	  // fixed value
-            'customerLocale'  => 'fr_FR',
-
-            // Charge parameters
-            'chargeId'        => time(),					// Optional, if defined, it must be unique for each redirection to the payment page
-            'orderId'         => $order->getNumber(),                  // Optional, to identify the cart
-            'price'           => $order->getTotal(),
-            'currency'        => 'MAD',
-            'description'     => 'مجلة لسان المغرب',
-
-            // Deep linking
-            'mode' => 'DEEP_LINK',	// fixed value
-            'paymentMethod' => 'CREDIT_CARD',	 // fixed value
-            'showPaymentProfiles' => 'false',
-            'callbackUrl' => route('checkout.pay.callback'),
-            'successUrl' => route('checkout.pay.ok', ['number' => $order->getNumber()]),
-            'failureUrl' => route('checkout.pay.fail', ['number' => $order->getNumber()]),
-            'cancelUrl' => config('app.site_url'),
-        ];
-
-        // Encode the payload
-        $json_payload = json_encode($payload);
-        $signature    = hash('sha256', $paywallSecretKey . $json_payload);
-?>
-<!-- POST the parameters to the paywall -->
-<form id="openPaywall" action="<?php echo $paywallUrl; ?>" method="POST" >
-	<input type="hidden" name="payload" value='<?php echo $json_payload; ?>' />
-	<input type="hidden" name="signature" value="<?php echo $signature; ?>" />
-</form>
-
-<script type="text/javascript">
-	document.getElementById("openPaywall").submit();
-</script>
-<?php
+        return view('payzone', $payzoneData);
     }
 
     public function paymentCallback(Request $request)
@@ -127,7 +71,7 @@ class PaymentController extends Controller
             return;
         }
 
-        $notificationKey = 'bAu0pSGHNZALR2AO';
+        $notificationKey = config('payzone.notification_key');
 
         $input = file_get_contents('php://input');
         $signature = hash_hmac('sha256', $input, $notificationKey);

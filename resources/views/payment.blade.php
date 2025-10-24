@@ -108,14 +108,14 @@
           <li class="display">
             <div class="payment-header">
               <div class="payment-title">
-                <span class="circle"></span><h3>عن طريق البطاقة البنكية عبر CMI</h3>
+                <span class="circle"></span><h3>عن طريق البطاقة البنكية عبر PAYZONE</h3>
               </div>
               <div class="payment-image">
                 <img src="/build/images/logo_cmi.png" alt="secure payment" />
               </div>
             </div>
             <div class="payment-content">
-                <p>سيتم تحويلك إلى منصة الدفع الآمن CMI لإتمام عملية الشراء.</p>
+                <p>سيتم تحويلك إلى منصة الدفع الآمن PAYZONE لإتمام عملية الشراء.</p>
             </div>
           </li>
         </ul>

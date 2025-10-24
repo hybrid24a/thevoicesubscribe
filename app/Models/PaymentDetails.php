@@ -28,7 +28,7 @@ class PaymentDetails extends Model
     const VOIDED_STATUS = 'voided';
     const CANCELED_STATUS = 'canceled';
 
-    const CMI = 'cmi';
+    const PAYZONE = 'payzone';
 
     public function getId(): int
     {
