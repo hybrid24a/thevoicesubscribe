@@ -7,7 +7,7 @@
 </head>
 <body>
   <form id="openPaywall" action="<?php echo $paywallUrl; ?>" method="POST" >
-    <input type="hidden" name="payload" value='<?php echo $json_payload; ?>' />
+    <input type="hidden" name="payload" value='<?php echo $payload; ?>' />
     <input type="hidden" name="signature" value="<?php echo $signature; ?>" />
   </form>
 
