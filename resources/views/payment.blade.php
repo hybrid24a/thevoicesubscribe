@@ -108,10 +108,10 @@
           <li class="display">
             <div class="payment-header">
               <div class="payment-title">
-                <span class="circle"></span><h3>عن طريق البطاقة البنكية عبر PAYZONE</h3>
+                <span class="circle"></span><h3>عن طريق البطاقة البنكية</h3>
               </div>
               <div class="payment-image">
-                <img src="/build/images/logo_cmi.png" alt="secure payment" />
+                <img src="{{ asset('/build/images/payzone-logo.png') }}" alt="secure payment" />
               </div>
             </div>
             <div class="payment-content">
@@ -121,6 +121,44 @@
         </ul>
       </div>
     </div>
+    <div class="accept-cgv-note">
+      <div class="checkbox-wrapper">
+        <label class="label" for="accept-cgv">
+          <input type="checkbox" id="accept-cgv" name="accept_cgv" {{ old('accept_cgv') ? 'checked' : '' }} />
+          <span class="text">أوافق على <a href="{{ $cgvUrl }}" target="_blank">الشروط العامة للبيع</a> لمجلة "لسان المغرب".</span>
+        </label>
+      </div>
+      @error('accept_cgv')
+      <div class="error">{{ $message }}</div>
+      @enderror
+    </div>
+    <style>
+
+      .accept-cgv-note {
+        a {
+          text-decoration: underline;
+          /* color: #23c704; */
+          font-weight: bold;
+        }
+
+        .checkbox-wrapper {
+          label {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+          }
+
+          input {
+            cursor: pointer;
+            margin-left: 5px;
+            accent-color: #23c704;
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+    </style>
     <div class="actions">
       <button type="submit" class="button" id="validate-payment">تأكيد الدفع</button>
       <a href="{{ config('app.site_url') }}">العودة إلى الصفحة الرئيسية</a>
@@ -158,13 +196,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const form = document.getElementById('make-order-form');
   const validateButton = document.getElementById('validate-payment');
+  const acceptCgvCheckbox = document.getElementById('accept-cgv');
+
   let submitting = false;
 
   form.addEventListener('submit', function (e) {
-    if (submitting) {
+    if (!acceptCgvCheckbox.checked) {
       e.preventDefault();
+      alert('يرجى قبول الشروط العامة للبيع للمتابعة.');
+
       return false;
     }
+
+    if (submitting) {
+      e.preventDefault();
+
+      return false;
+    }
+
     submitting = true;
     validateButton.disabled = true;
     validateButton.setAttribute('aria-busy', 'true');

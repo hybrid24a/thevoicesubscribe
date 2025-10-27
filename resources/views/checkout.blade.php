@@ -21,7 +21,7 @@
             @yield('content')
             <div class="checkout-footer">
               <div class="footer-image">
-                <img src="/build/images/secure-payment.webp" alt="secure payment" />
+                <img src="{{ asset('/build/images/payzone-box-2.png') }}" alt="Logo" />
               </div>
             </div>
           </main>

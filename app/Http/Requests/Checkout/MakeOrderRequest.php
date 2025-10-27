@@ -26,6 +26,7 @@ class MakeOrderRequest extends CheckoutRequest
             'email'                 => ['required', 'string', 'email', 'unique:users,email'],
             'password'              => ['required', 'string'],
             'password_confirmation' => ['required', 'string', 'same:password'],
+            'accept_cgv'            => ['accepted'],
         ];
     }
 

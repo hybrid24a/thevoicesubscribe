@@ -214,6 +214,7 @@ input::placeholder {
     color: #777777;
     direction: ltr;
     line-height: 1;
+    text-align: right;
   }
 
   .cart-total-wrapper {
@@ -262,7 +263,6 @@ input::placeholder {
     img {
       display: block;
       width: 100%;
-      max-width: 390px;
       margin: 0 auto;
     }
   }
@@ -303,7 +303,7 @@ input::placeholder {
     .payment-image {
       img {
         display: block;
-        width: 43px;
+        width: 66px;
       }
     }
 

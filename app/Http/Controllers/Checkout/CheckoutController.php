@@ -153,6 +153,7 @@ class CheckoutController extends Controller
             'user'            => $user,
             'cart'            => $cart,
             'price'           => $price,
+            'cgvUrl'          => config('payzone.cgv_url'),
         ]);
     }
 
@@ -203,7 +204,7 @@ class CheckoutController extends Controller
         }
 
         return redirect()->route('checkout.pay', [
-            'order' => $order->getNumber()
+            'order' => $order->getNumber(),
         ]);
     }
 
