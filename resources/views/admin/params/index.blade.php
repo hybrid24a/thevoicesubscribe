@@ -10,7 +10,7 @@
       <div class="block-options"></div>
     </div>
     <div class="block-content with-padding">
-      <form action="{{ route('params') }}" method="POST" id="reserve-invoice-form">
+      <form action="{{ route('admin.params') }}" method="POST" id="reserve-invoice-form">
         @csrf
         <div class="form-content">
           <div class="form-control inline">

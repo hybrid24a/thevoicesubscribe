@@ -37,6 +37,17 @@ class OrdersRepository
     /**
      * @return Collection|Order[]
      */
+    public function getAll()
+    {
+        return Order::query()
+            ->select(Order::ID_COLUMN)
+            ->orderByDesc(Order::CREATED_AT_COLUMN)
+            ->get();
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
     public function getByUserId(int $userId)
     {
         return Order::query()

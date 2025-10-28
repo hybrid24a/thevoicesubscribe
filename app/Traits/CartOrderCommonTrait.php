@@ -150,11 +150,13 @@ trait CartOrderCommonTrait
     {
         $items = [];
 
+        $currency = 'MAD';
+
         if ($this->getTip() > 0) {
             $items[] = [
                 'thumbnail' => '/build/images/tips.jpg',
                 'title'     => self::TIP_TITLE['ar'],
-                'price'     => $this->getTip() . ' Dh',
+                'price'     => $this->getTip() . ' ' . $currency,
             ];
         }
 
@@ -162,7 +164,7 @@ trait CartOrderCommonTrait
             $items[] = [
                 'thumbnail' => '/build/images/sub-yearly-archive.jpg',
                 'title'     => self::YEARLY_SUBSCRIPTION_ARCHIVE_TITLE['ar'],
-                'price'     => $this->price . ' Dh',
+                'price'     => $this->price . ' ' . $currency,
             ];
 
             return $items;
@@ -176,7 +178,7 @@ trait CartOrderCommonTrait
                 'thumbnail' => $details['thumbnail'] ?? null,
                 'title'     => $details['title'],
                 'subtitle'  => $magazineNumberText,
-                'price'     => $this->price . ' Dh',
+                'price'     => $this->price . ' ' . $currency,
             ];
 
             return $items;
@@ -185,7 +187,7 @@ trait CartOrderCommonTrait
         $items[] = [
             'thumbnail' => '/build/images/sub-yearly.jpg',
             'title'     => self::YEARLY_SUBSCRIPTION_TITLE['ar'],
-            'price'     => $this->price . ' Dh',
+            'price'     => $this->price . ' ' . $currency,
         ];
 
         if (isset($details['number'])) {

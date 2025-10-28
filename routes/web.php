@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\OrdersController;
 use App\Http\Controllers\Admin\ParamsController;
 use App\Http\Controllers\Checkout\CheckoutController;
 use App\Http\Controllers\Checkout\PaymentController;
@@ -45,7 +46,9 @@ Route::domain($adminDomain)
 
         // Protected Admin Routes
         Route::middleware('auth.admin')->group(function () {
-            Route::get('/params', [ParamsController::class, 'index'])->name('params');
+            Route::get('/params', [ParamsController::class, 'index'])->name('admin.params');
             Route::post('/params', [ParamsController::class, 'store']);
+
+            Route::get('/orders', [OrdersController::class, 'list'])->name('admin.orders.list');
         });
     });

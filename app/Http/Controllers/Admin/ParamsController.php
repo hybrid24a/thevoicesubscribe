@@ -49,7 +49,7 @@ class ParamsController extends Controller
         $invoiceNumber = (int) $request->input('invoice_number');
 
         if ($invoiceNumber <= $lastInvoiceNumber) {
-            return redirect()->route('params')->withErrors([
+            return redirect()->route('admin.params')->withErrors([
                 'invoice_number' => 'Le numéro de facture doit être supérieur au dernier numéro de facture utilisé ou réservé.',
             ])->withInput();
         }
@@ -59,7 +59,7 @@ class ParamsController extends Controller
             ReservedInvoice::NUMBER_COLUMN => $invoiceNumber,
         ]);
 
-        return redirect()->route('params')
+        return redirect()->route('admin.params')
             ->with('success', 'Numéro de facture réservé avec succès.');
     }
 }

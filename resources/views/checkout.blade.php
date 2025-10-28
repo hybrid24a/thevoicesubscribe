@@ -61,7 +61,7 @@
                     <span class="total-text">المجموع</span>
                     <div class="total-taxes">الضرائب مشمولة</div>
                   </div>
-                  <span class="total-value">{{ $cart->getFormattedTotal() }} Dh</span>
+                  <span class="total-value">{{ $cart->getFormattedTotal() }} MAD</span>
                 </div>
               </div>
             </div>

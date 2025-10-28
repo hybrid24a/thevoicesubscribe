@@ -95,6 +95,20 @@ class OrdersService
     /**
      * @return Collection|Order[]
      */
+    public function getAll()
+    {
+        $orders = $this->ordersRepository->getAll();
+
+        foreach ($orders as $key => $order) {
+            $orders[$key] = $this->getById($order->getId());
+        }
+
+        return $orders;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
     public function getByUser(User $user)
     {
         $orders = $this->ordersRepository->getByUserId($user->getId());

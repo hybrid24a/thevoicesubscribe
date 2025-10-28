@@ -28,6 +28,12 @@ class Order extends Model
         self::CANCELED_STATUS,
     ];
 
+    const STATUSES_DISPLAY = [
+        self::OPEN_STATUS      => 'Ouverte',
+        self::FULFILLED_STATUS => 'Terminée',
+        self::CANCELED_STATUS  => 'Annulée',
+    ];
+
     protected $casts = [
         'item_details' => 'array',
     ];

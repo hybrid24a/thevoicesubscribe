@@ -19,10 +19,16 @@
       </div>
       <nav class="main-menu">
         <ul>
-          <li class="{{ request()->routeIs('params') ? 'active' : '' }}">
-            <a href="{{ route('params') }}">
+          <li class="{{ request()->routeIs('admin.params') ? 'active' : '' }}">
+            <a href="{{ route('admin.params') }}">
               <span class="icon"><i class="fas fa-cog"></i></span>
               <span class="text">Paramètres</span>
+            </a>
+          </li>
+          <li class="{{ request()->routeIs('admin.orders.list') ? 'active' : '' }}">
+            <a href="{{ route('admin.orders.list') }}">
+              <span class="icon"><i class="fas fa-cog"></i></span>
+              <span class="text">Commandes</span>
             </a>
           </li>
         </ul>

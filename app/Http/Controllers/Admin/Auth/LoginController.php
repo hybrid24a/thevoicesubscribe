@@ -25,7 +25,7 @@ class LoginController extends Controller
         if (Auth::guard('admin')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('params'));
+            return redirect()->intended(route('admin.params'));
         }
 
         throw ValidationException::withMessages([
