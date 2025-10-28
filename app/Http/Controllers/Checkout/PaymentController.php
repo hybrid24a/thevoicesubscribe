@@ -138,6 +138,6 @@ class PaymentController extends Controller
 
     public function fail(Request $request, string $number)
     {
-        echo 'عملية الدفع فشلت. الرجاء المحاولة مرة أخرى.';
+        return redirect(config('app.site_url') . '/order-failed?order=' . $number);
     }
 }
