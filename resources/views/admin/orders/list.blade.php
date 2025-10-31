@@ -20,6 +20,7 @@
               <th>Numéro de commande</th>
               <th>Utilisateur</th>
               <th>Email</th>
+              <th>Produits</th>
               <th>Status</th>
               <th>Total</th>
               <th>Don</th>
@@ -32,9 +33,14 @@
               <td>{{ $order->getNumber() }}</td>
               <td>{{ $order->getUser()->getName() }}</td>
               <td>{{ $order->getUser()->getEmail() }}</td>
+              <td>
+                @foreach ($order->getOrderItems() as $item)
+                  <div>{{ $item['title'] }}</div>
+                @endforeach
+              </td>
               <td>{{ $orderStatusesDisplay[$order->getStatus()] }}</td>
               <td>{{ number_format($order->getPrice(), 2) }} MAD</td>
-              <td>{{ $order->getTip() ? number_format($order->getTip(), 2) . ' MAD' : 'N/A' }}</td>
+              <td>{{ $order->getTip() ? number_format($order->getTip(), 2) . ' MAD' : '------' }}</td>
               <td>{{ $order->getCreatedAt()->format('d/m/Y H:i') }}</td>
             </tr>
             @endforeach

@@ -133,7 +133,6 @@
       @enderror
     </div>
     <style>
-
       .accept-cgv-note {
         a {
           text-decoration: underline;

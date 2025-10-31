@@ -137,6 +137,50 @@ class Order extends Model
         return $items;
     }
 
+    public function getOrderItems(): array
+    {
+        $items = [];
+
+        $formatedPrice = number_format($this->price, 2);
+
+        if ($this->isSubscriptionArchiveItem()) {
+            $items[] = [
+                'thumbnail' => '/build/images/sub-yearly-archive.jpg',
+                'title'     => self::YEARLY_SUBSCRIPTION_ARCHIVE_TITLE['fr'],
+                'price'     => $formatedPrice,
+            ];
+
+            $items = array_reverse($items);
+
+            return $items;
+        }
+
+        $details = $this->getItemDetails();
+
+        if ($this->isMagazineItem()) {
+            $magazineNumberText = self::MAGAZINE_NUMBER_TITLE['fr'] . ' ' . $details['number'];
+            $items[] = [
+                'thumbnail' => $details['thumbnail'] ?? null,
+                'title'     => $magazineNumberText,
+                'price'     => $formatedPrice,
+            ];
+
+            $items = array_reverse($items);
+
+            return $items;
+        }
+
+        $items[] = [
+            'thumbnail' => '/build/images/sub-yearly.jpg',
+            'title'     => self::YEARLY_SUBSCRIPTION_TITLE['fr'],
+            'price'     => $formatedPrice,
+        ];
+
+        $items = array_reverse($items);
+
+        return $items;
+    }
+
     public function getInvoiceNumber(): ?int
     {
         return $this->invoice_number;

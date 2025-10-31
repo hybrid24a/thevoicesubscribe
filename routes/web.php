@@ -38,6 +38,10 @@ $adminDomain = parse_url(config('app.admin_url'), PHP_URL_HOST);
 
 Route::domain($adminDomain)
     ->group(function () {
+        Route::get('/', function () {
+            return redirect()->route('admin.orders.list');
+        });
+
         Route::middleware('guest.admin')->group(function () {
             Route::get('/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
             Route::post('/login', [LoginController::class, 'login']);
